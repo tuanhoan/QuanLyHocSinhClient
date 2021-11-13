@@ -1,0 +1,100 @@
+﻿@page "/information"
+@inject ISnackbar Snackbar
+<MudGrid Class="mt-10">
+    <MudItem xs="6" sm="3">
+        <MudCard>
+            <MudCardMedia Image="https://scontent.fhan5-6.fna.fbcdn.net/v/t39.30808-6/253343382_170052638676661_4132829217994725713_n.jpg?_nc_cat=105&ccb=1-5&_nc_sid=8bfeb9&_nc_ohc=ntqpjaDskxQAX_Oqvis&_nc_ht=scontent.fhan5-6.fna&oh=47c66e5024bcbd5f427ea01894fce64c&oe=61949733" Height="200" />
+            <MudCardContent>
+                <MudText Typo="Typo.h5">Nguyễn Tuấn Anh</MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Text" Color="Color.Primary">Thay đổi ảnh</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+    <MudItem xs="6" sm="9">
+        <MudGrid>
+            <MudItem xs="6" sm="6">
+                <MudText>Mã số sinh viên: 1811060024</MudText>
+                <MudText>Lớp: 18DTHC2</MudText>
+                <MudText>Chuyên ngành: Công nghệ thông tin</MudText>
+                <MudText>Niên Khóa: 2018-2022</MudText>
+            </MudItem>
+            <MudItem xs="6" sm="6">
+                <MudText>Họ và tên: Nguyễn Tuấn Anh</MudText>
+                <MudText>Quê quán: Hà Tĩnh</MudText>
+                <MudText>Số điện thoại: 0948502258</MudText>
+
+                <MudText>Ngày sinh: 24.04.2000</MudText>
+            </MudItem>
+        </MudGrid>
+        <MudText Align="Align.Left" Class="mt-10"><b>Thông tin sinh viên.</b></MudText>
+        <MudDivider />
+        <MudGrid>
+            <MudItem xs="12" sm="6">
+                <MudSelect T="string" Label="Giới tính">
+                    <MudSelectItem Value="@("Nam")" />
+                    <MudSelectItem Value="@("Nữ")" />
+                    <MudSelectItem Value="@("Irish Coffee")" />
+                </MudSelect>
+                <MudField Label="Email" Variant="Variant.Text">ntanh.hutech@gmail.com</MudField>
+                <MudField Label="Số điện thoại" Variant="Variant.Text">0948502258</MudField>
+                <MudField Label="Căn cước công dân" Variant="Variant.Text">184340014</MudField>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudField Label="Quốc tịch" Variant="Variant.Text">Việt Nam</MudField>
+                <MudField Label="Dân tốc" Variant="Variant.Text">Kinh</MudField>
+                <MudField Label="Tôn giáo" Variant="Variant.Text">Công giáo</MudField>
+                <div class="d-flex">
+                    <MudDatePicker Class="w-50" Label="Ngày cấp" @bind-Date="date" DisableToolbar="true" />
+                    <span></span>
+                    <MudField Label="Nơi cấp" Variant="Variant.Text">CA Hà Tĩnh</MudField>
+                </div>
+            </MudItem>
+        </MudGrid>
+        <MudText Align="Align.Left" Class="mt-10"><b>Địa chỉ liên lạc.</b></MudText>
+        <MudDivider />
+        <MudGrid>
+            <MudItem xs="12" sm="6">
+                <MudSelect T="string" Label="Tỉnh TP">
+                    <MudSelectItem Value="@("Hà Tĩnh")" />
+                    <MudSelectItem Value="@("Vinh")" />
+                    <MudSelectItem Value="@("Irish Coffee")" />
+                </MudSelect>
+                <MudSelect T="string" Label="Xã/ Phường">
+                    <MudSelectItem Value="@("Nam")" />
+                    <MudSelectItem Value="@("Nữ")" />
+                    <MudSelectItem Value="@("Irish Coffee")" />
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudSelect T="string" Label="Quận/ Huyện">
+                    <MudSelectItem Value="@("Nam")" />
+                    <MudSelectItem Value="@("Nữ")" />
+                    <MudSelectItem Value="@("Irish Coffee")" />
+                </MudSelect>
+                <MudField Label="Nơi cấp" Variant="Variant.Text">Địa chỉ cụ thể</MudField>
+            </MudItem>
+        </MudGrid>
+        <MudText Align="Align.Left" Class="mt-10"><b>Thông tin nhân thân.</b></MudText>
+        <MudDivider />
+        <MudGrid>
+            <MudItem xs="12" sm="6">
+                <MudField Label="Họ tên cha/mẹ" Variant="Variant.Text">Nguyễn Văn Hoàn</MudField>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudField Label="Số điện thoại" Variant="Variant.Text">0948502258</MudField>
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+</MudGrid>
+<MudScrollToTop TopOffset="0">
+    <MudButton Variant="Variant.Filled" OnClick="SaveChange" Color="Color.Primary">Lưu thông tin</MudButton>
+</MudScrollToTop>
+@code {
+    DateTime? date = DateTime.Today;
+    void SaveChange()
+    {
+        Snackbar.Add("Lưu thành công");
+    }
+}
