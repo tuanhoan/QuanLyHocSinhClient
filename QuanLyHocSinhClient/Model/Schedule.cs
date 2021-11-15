@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace QuanLyTKB.Models
+namespace QuanLyHocSinhClient.Models
 {
     public class Schedule
     {

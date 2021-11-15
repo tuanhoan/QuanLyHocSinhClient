@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace QuanLyHocSinh.Models
+namespace QuanLyHocSinhClient.Models
 {
     public class Teacher
     {
