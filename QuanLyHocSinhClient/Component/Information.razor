@@ -21,9 +21,9 @@
                 <MudText>Niên Khóa: 2018-2022</MudText>
             </MudItem>
             <MudItem xs="6" sm="6">
-                <MudText>Họ và tên: Nguyễn Tuấn Anh</MudText>
-                <MudText>Quê quán: Hà Tĩnh</MudText>
-                <MudText>Số điện thoại: 0948502258</MudText>
+                <MudText>Họ và tên: @student.Name</MudText>
+                <MudText>Quê quán: @student.Address</MudText>
+                <MudText>Số điện thoại: @student.PhoneNumber</MudText>
 
                 <MudText>Ngày sinh: 24.04.2000</MudText>
             </MudItem>
@@ -37,7 +37,7 @@
                     <MudSelectItem Value="@("Nữ")" />
                     <MudSelectItem Value="@("Irish Coffee")" />
                 </MudSelect>
-                <MudField Label="Email" Variant="Variant.Text">ntanh.hutech@gmail.com</MudField>
+                <MudField Label="Email" Variant="Variant.Text">@student.Email</MudField>
                 <MudField Label="Số điện thoại" Variant="Variant.Text">0948502258</MudField>
                 <MudField Label="Căn cước công dân" Variant="Variant.Text">184340014</MudField>
             </MudItem>
@@ -93,6 +93,13 @@
 </MudScrollToTop>
 @code {
     DateTime? date = DateTime.Today;
+    Student student = new Student()
+    {
+        Address = "Hà Tĩnh",
+        Name = "Nguyễn Tuấn Anh",
+        PhoneNumber = "0948502258",
+        Email = "ntnanh.hutech@gmail.com"
+    };
     void SaveChange()
     {
         Snackbar.Add("Lưu thành công");

@@ -1,16 +1,44 @@
 ﻿@page "/"
 
-<MudText Typo="Typo.h6">MudBlazor is @Text</MudText>
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ButtonOnClick">@ButtonText</MudButton>
-@code {
-    public string Text { get; set; } = "????";
-    public string ButtonText { get; set; } = "Click Me";
-    public int ButtonClicked { get; set; }
+<MudTable Items="@scores" Hover="true" Breakpoint="Breakpoint.Sm"  LoadingProgressColor="Color.Info">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Học kì 1 - Năm 2021-2022</MudText>
+        <MudSpacer />
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>SemesterId</MudTh>
+        <MudTh>StudentId</MudTh>
+        <MudTh>TestTypeId</MudTh>
+        <MudTh>SubjectId</MudTh> 
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="SemesterId">@context.SemesterId</MudTd>
+        <MudTd DataLabel="StudentId">@context.StudentId</MudTd>
+        <MudTd DataLabel="TestTypeId">@context.TestTypeId</MudTd>
+        <MudTd DataLabel="SubjectId">@context.SubjectId</MudTd> 
+    </RowTemplate>
+</MudTable>
 
-    void ButtonOnClick()
+@code {
+    List<Score> scores = new List<Score>();
+    Score score = new Score()
     {
-        ButtonClicked += 1;
-        Text = $"Awesome x {ButtonClicked}";
-        ButtonText = "Click Me Again";
+        SemesterId = 1,
+        StudentId = new Guid("06fe4513-f2cb-43a7-8293-e34f0cc0c77b"),
+        TestTypeId = 1,
+        SubjectId = 2
+    };
+    Score score2 = new Score()
+    {
+        SemesterId = 1,
+        StudentId = new Guid("06fe4513-f2cb-43a7-8293-e34f0cc0c77b"),
+        TestTypeId = 1,
+        SubjectId = 2
+    };
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        scores.Add(score);
+        scores.Add(score2);
     }
 }
