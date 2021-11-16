@@ -1,6 +1,6 @@
 ﻿@page "/"
 
-<MudTable Items="@scores" Hover="true" Breakpoint="Breakpoint.Sm"  LoadingProgressColor="Color.Info">
+<MudTable Items="@scores" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Học kì 1 - Năm 2021-2022</MudText>
         <MudSpacer />
@@ -9,13 +9,13 @@
         <MudTh>SemesterId</MudTh>
         <MudTh>StudentId</MudTh>
         <MudTh>TestTypeId</MudTh>
-        <MudTh>SubjectId</MudTh> 
+        <MudTh>SubjectId</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="SemesterId">@context.SemesterId</MudTd>
         <MudTd DataLabel="StudentId">@context.StudentId</MudTd>
         <MudTd DataLabel="TestTypeId">@context.TestTypeId</MudTd>
-        <MudTd DataLabel="SubjectId">@context.SubjectId</MudTd> 
+        <MudTd DataLabel="SubjectId">@context.SubjectId</MudTd>
     </RowTemplate>
 </MudTable>
 
@@ -35,10 +35,11 @@
         TestTypeId = 1,
         SubjectId = 2
     };
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        await base.OnInitializedAsync();
         scores.Add(score);
         scores.Add(score2);
+        var x = await API<List<Subject>>.QLDiem.GetAsync("/api/Subjects");
     }
 }
