@@ -1,9 +1,29 @@
-﻿@page "/timetable"
+﻿    
+    <MudGrid Class="oi-fullscreen-enter">
+        <MudField Label="@title" Variant="Variant.Filled"></MudField>
+    </MudGrid>
+    <MudGrid Class="mt-7">
+        @foreach (var item in schedules)
+        {
+            <MudItem xs="3" sm="3">
+                <MudText>@item.Id</MudText>
+            </MudItem>
+            <MudItem xs="3" sm="3">
+                <MudText>@item.Week</MudText>
+            </MudItem>
+            <MudItem xs="3" sm="3">
+                <MudText>@item.CreateAt</MudText>
+            </MudItem>
+            <MudItem xs="3" sm="3">
+                <MudText>@item.ClassId</MudText>
+            </MudItem>
+        }
 
-    
+    </MudGrid>
 
 
 @code {
-
+    [Parameter] public string title { get; set; }
+    [Parameter] public List<Schedule> schedules { get; set; }
+    
 }
-         

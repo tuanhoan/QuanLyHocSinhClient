@@ -1,0 +1,18 @@
+﻿@page "/timetable"
+<Timetable title="Thứ 2, Ngày 15/11/2021" schedules="@listModel"></Timetable>
+<Timetable title="Thứ 3, Ngày 15/11/2021" schedules="@listModel"></Timetable>
+@code {
+    List<Schedule> listModel = new List<Schedule>();
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        listModel.Add(new Schedule()
+        {
+            Id = 1,
+            Week = 1,
+            CreateAt = DateTime.Now,
+            ClassId = 1
+        });
+    }
+}
