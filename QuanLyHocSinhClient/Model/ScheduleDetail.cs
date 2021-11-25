@@ -12,6 +12,7 @@ namespace QuanLyHocSinhClient.Models
         public int SubjectId { get; set; }
         public virtual Schedule ScheduleNavigation { get; set; }
         public virtual Lesson LessonNavigation { get; set; }
+        public virtual Subject SubjectNavigation { get; set; }
 
     }
 }

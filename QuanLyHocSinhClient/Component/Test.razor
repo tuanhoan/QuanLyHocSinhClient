@@ -1,18 +1,42 @@
 ﻿@page "/timetable"
-<Timetable title="Thứ 2, Ngày 15/11/2021" schedules="@listModel"></Timetable>
-<Timetable title="Thứ 3, Ngày 15/11/2021" schedules="@listModel"></Timetable>
+@using System.Globalization
+@*<TitleTimetable></TitleTimetable>*@
+@for (int i = 0; i < 6; i++)
+{
+    int index = i;
+    <Timetable title="@ConvertDateToString(monday.AddDays(index))" scheduleDetails="@getScheduleDetailByDay(monday.AddDays(index))"></Timetable>
+}
+@*<Timetable title="@(title.DayOfWeek +", Ngay"+ title.ToString("dd/MM/yyyy"))" scheduleDetails="@scheduleDetails"></Timetable>
+<Timetable title="Thứ 3, Ngày 15/11/2021" scheduleDetails="@scheduleDetails"></Timetable>*@
+@*@foreach(var item in scheduleDetails)
+    {
+        <p>@item.SubjectId</p>
+    }*@
 @code {
     List<Schedule> listModel = new List<Schedule>();
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
+    DateTime title;
+    DateTime monday = DateTime.Now.AddDays(-1 * (7 + (DateTime.Now.DayOfWeek - DayOfWeek.Monday)) % 7).Date;
 
-        listModel.Add(new Schedule()
-        {
-            Id = 1,
-            Week = 1,
-            CreateAt = DateTime.Now,
-            ClassId = 1
-        });
+    //List<Subject> subjects = new
+    List<ScheduleDetail> scheduleDetails = new List<ScheduleDetail>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        string param = "25112021";
+        //listModel = await API<List<Schedule>>.QLTKB.GetAsync("/api/Su");
+        scheduleDetails = await API<List<ScheduleDetail>>.Instance.GetAsync($"/api/ScheduleDetails/scheduleDetailByDate/{param}");
+
     }
+    string ConvertDateToString(DateTime dateTime)
+    {
+        var param = dateTime.ToString("ddMMyyyy");
+        title = DateTime.ParseExact(param, "ddMMyyyy", CultureInfo.InvariantCulture);
+        return title.DayOfWeek + ", Ngay" + title.ToString("dd/MM/yyyy");
+    }
+      List<ScheduleDetail> getScheduleDetailByDay(DateTime dateTime)
+        {
+            var param = dateTime.ToString("ddMMyyyy");
+            return  API<List<ScheduleDetail>>.Instance.GetAsync($"/api/ScheduleDetails/scheduleDetailByDate/{param}").Result;
+        }
 }
