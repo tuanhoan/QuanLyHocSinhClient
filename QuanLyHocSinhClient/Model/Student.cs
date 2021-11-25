@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using QuanLyHocSinhClient.Model;
 
 namespace QuanLyHocSinhClient.Models
 {
     public class Student
     {
+        public Student()
+        {
+            Comments = new HashSet<Comment>();
+        }
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
@@ -18,5 +23,6 @@ namespace QuanLyHocSinhClient.Models
         public string PhoneNumberParent { get; set; }
         public int ClassId { get; set; }
         public virtual Class ClassNavigation { get; set; }
+        public  virtual  ICollection<Comment> Comments { get; set; }
     }
 }
