@@ -1,45 +1,42 @@
 ﻿@page "/"
 
-<MudTable Items="@scores" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+<MudTable Class="mt-3 diem_table" Items="@subjects" Hover="true" Bordered="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Học kì 1 - Năm 2021-2022</MudText>
         <MudSpacer />
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>SemesterId</MudTh>
-        <MudTh>StudentId</MudTh>
-        <MudTh>TestTypeId</MudTh>
+        <MudTh>Subject</MudTh>
+        @foreach (var item in testTypes)
+        {
+            <MudTd>@item.TestName</MudTd>
+        }
         <MudTh>SubjectId</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="SemesterId">@context.SemesterId</MudTd>
-        <MudTd DataLabel="StudentId">@context.StudentId</MudTd>
-        <MudTd DataLabel="TestTypeId">@context.TestTypeId</MudTd>
-        <MudTd DataLabel="SubjectId">@context.SubjectId</MudTd>
+        <MudTd DataLabel="SemesterId">@context.Name</MudTd>
+        @for (int i = 0; i < testTypes.Count; i++)
+        {
+            int testTypeId = testTypes[i].Id;
+            string dataLabel = testTypes[i].TestName;
+            <MudTd DataLabel="@dataLabel">@scores.Where(x => x.SubjectId == context.Id && x.TestTypeId == testTypeId).FirstOrDefault()?.Point</MudTd>
+        }
+        <MudTd DataLabel="SemesterId">@context.Name</MudTd>
     </RowTemplate>
 </MudTable>
 
 @code {
+    int semesterId = 1;
+    Guid studentId = new Guid("4b96c185-e13d-4a33-0030-08d9a9d4ea75");
     List<Score> scores = new List<Score>();
-    Score score = new Score()
-    {
-        SemesterId = 1,
-        StudentId = new Guid("06fe4513-f2cb-43a7-8293-e34f0cc0c77b"),
-        TestTypeId = 1,
-        SubjectId = 2
-    };
-    Score score2 = new Score()
-    {
-        SemesterId = 1,
-        StudentId = new Guid("06fe4513-f2cb-43a7-8293-e34f0cc0c77b"),
-        TestTypeId = 1,
-        SubjectId = 2
-    };
+    List<TestType> testTypes = new List<TestType>();
+    List<Subject> subjects = new List<Subject>();
     protected async override Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        scores.Add(score);
-        scores.Add(score2);
-        var x = await API<List<Subject>>.QLDiem.GetAsync("/api/Subjects");
+        var student = await API<List<Student>>.QLHocSinh.GetAsync("api/Students");
+        testTypes = await API<List<TestType>>.QLHocSinh.GetAsync("api/testtypes");
+        subjects = await API<List<Subject>>.QLHocSinh.GetAsync("api/subjects");
+       //scores = await API<List<Score>>.QLDiem.GetAsync($"/api/Scores/GetScoresByStudentAndSemester/{studentId}/{semesterId}");
     }
 }

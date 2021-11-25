@@ -1,29 +1,36 @@
 ﻿    
-    <MudGrid Class="oi-fullscreen-enter">
+    @*<MudGrid Class="oi-fullscreen-enter">
         <MudField Label="@title" Variant="Variant.Filled"></MudField>
-    </MudGrid>
-    <MudGrid Class="mt-7">
-        @foreach (var item in schedules)
+    </MudGrid>*@
+<MudField Label="@title" Variant="Variant.Filled"></MudField>
+<MudTable Items="@scheduleDetails" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+    
+    <RowTemplate>
+        
+        <MudTd>@context.SubjectNavigation.Name</MudTd>
+        @foreach (var item in teachers)
         {
-            <MudItem xs="3" sm="3">
-                <MudText>@item.Id</MudText>
-            </MudItem>
-            <MudItem xs="3" sm="3">
-                <MudText>@item.Week</MudText>
-            </MudItem>
-            <MudItem xs="3" sm="3">
-                <MudText>@item.CreateAt</MudText>
-            </MudItem>
-            <MudItem xs="3" sm="3">
-                <MudText>@item.ClassId</MudText>
-            </MudItem>
+            if (item.SubjectId == context.SubjectId)
+            {
+                <MudTd>@item.Name</MudTd>
+            }
         }
 
-    </MudGrid>
+
+
+    </RowTemplate>
+</MudTable>
 
 
 @code {
     [Parameter] public string title { get; set; }
-    [Parameter] public List<Schedule> schedules { get; set; }
-    
+    [Parameter] public List<ScheduleDetail> scheduleDetails { get; set; }
+    List<Teacher> teachers = new List<Teacher>();
+    string name;
+    protected async override Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        teachers = await API<List<Teacher>>.QLHocSinh.GetAsync("/api/Teachers");
+
+    }
 }

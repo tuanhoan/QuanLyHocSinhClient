@@ -11,26 +11,14 @@ namespace QuanLyHocSinhClient.APIHelper
     {
         Uri baseUrl = new Uri("https://quanlydiem.azurewebsites.net/");
         public static Dictionary<string, string> headers;
-        HttpClient httpClient;
+        static HttpClient httpClient;
         private static API<T> qLDiem; 
-        public static API<T> QLDiem
-        {
-            get { if (qLDiem == null) qLDiem = new API<T>("https://quanlydiem.azurewebsites.net/"); return qLDiem; }
-            set => qLDiem = value;
-        }
-
-        private static API<T> qLTKB;
-        public static API<T> QLTKB
-        {
-            get { if (qLTKB == null) qLTKB = new API<T>("https://quanlytkb.azurewebsites.net/"); return qLTKB; }
-            set => qLTKB = value;
-        }
-
-        private static API<T> qLHocSinh;
         public static API<T> QLHocSinh
         {
-            get { if (qLHocSinh == null) qLHocSinh = new API<T>("https://quanlyhocsinh.azurewebsites.net/"); return qLHocSinh; }
-            set => qLHocSinh = value;
+            get {  qLDiem = new API<T>("https://quanlyhocsinh.azurewebsites.net/");
+                httpClient = new HttpClient() { BaseAddress = new Uri("https://quanlyhocsinh.azurewebsites.net/") }; 
+                return qLDiem; }
+            set => qLDiem = value;
         }
 
 

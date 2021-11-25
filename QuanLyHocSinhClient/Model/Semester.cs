@@ -12,8 +12,8 @@ namespace QuanLyHocSinhClient.Models
             Scores = new HashSet<Score>();
         }
         public int Id { get; set; }
-        public DateTime TimeStart { get; set; }
-        public DateTime TimeEnd { get; set; }
+        public string TimeStart { get; set; }
+        public string TimeEnd { get; set; }
         public ICollection<Score> Scores { get; set; }
     }
 }
