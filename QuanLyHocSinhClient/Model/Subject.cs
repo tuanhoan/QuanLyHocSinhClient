@@ -10,10 +10,12 @@ namespace QuanLyHocSinhClient.Models
         public Subject()
         {
             Scores = new HashSet<Score>();
+            Teachers = new HashSet<Teacher>();
         }
         public int Id { get; set; }
         public string Name { get; set; }
-        public Guid TeacherId { get; set; }
+       
         public ICollection<Score> Scores { get; set; }
+        public ICollection<Teacher> Teachers { get; set; }
     }
 }
