@@ -1,42 +1,14 @@
 ﻿@page "/"
+@using System.Globalization
 
-<MudTable Class="mt-3 diem_table" Items="@subjects" Hover="true" Bordered="true" Breakpoint="Breakpoint.Sm"  LoadingProgressColor="Color.Info">
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Học kì 1 - Năm 2021-2022</MudText>
-        <MudSpacer />
-    </ToolBarContent>
-    <HeaderContent>
-        <MudTh>Subject</MudTh> 
-        @foreach (var item in testTypes)
-        {
-            <MudTd>@item.TestName</MudTd>
-        } 
-        <MudTh>SubjectId</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="SemesterId">@context.Name</MudTd>
-        @for (int i = 0; i < testTypes.Count; i++)
-        {
-            int testTypeId = testTypes[i].Id;
-            string dataLabel = testTypes[i].TestName;
-            <MudTd DataLabel="@dataLabel">@scores.Where(x => x.SubjectId == context.Id && x.TestTypeId == testTypeId).FirstOrDefault()?.Point</MudTd>
-        } 
-        <MudTd DataLabel="SemesterId">@context.Name</MudTd>
-    </RowTemplate>
-</MudTable>
+<p>cccc</p>
 
-@code {
-    int semesterId = 1;
-    Guid studentId = new Guid("4b96c185-e13d-4a33-0030-08d9a9d4ea75");
-    List<Score> scores = new List<Score>();
-    List<TestType> testTypes = new List<TestType>();
-    List<Subject> subjects = new List<Subject>();
-    protected async override Task OnInitializedAsync()
+@code
+{
+    protected override Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
-
-        testTypes = await API<List<TestType>>.QLDiem.GetAsync("api/testtypes");
-        subjects = await API<List<Subject>>.QLDiem.GetAsync("api/subjects");
-        scores = await API<List<Score>>.QLDiem.GetAsync($"/api/Scores/GetScoresByStudentAndSemester/{studentId}/{semesterId}");
+        string date = "25112021";
+        DateTime dt = DateTime.ParseExact("24012013", "ddMMyyyy", CultureInfo.InvariantCulture);
+        return base.OnInitializedAsync();
     }
 }

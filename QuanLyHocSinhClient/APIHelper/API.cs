@@ -3,55 +3,111 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace QuanLyHocSinhClient.APIHelper
 {
     public class API<T>
     {
-        Uri baseUrl = new Uri("https://quanlydiem.azurewebsites.net/");
-        public static Dictionary<string, string> headers;
-        HttpClient httpClient;
-        private static API<T> qLDiem; 
-        public static API<T> QLDiem
+        readonly HttpClient _httpClient;
+        private static API<T> instance;
+        private T _data;
+        private string URL_API = "https://quanlyhocsinh.azurewebsites.net/";
+        public static API<T> Instance
         {
-            get { if (qLDiem == null) qLDiem = new API<T>("https://quanlydiem.azurewebsites.net/"); return qLDiem; }
-            set => qLDiem = value;
+            get { return instance ??= new API<T>(); }
+            set => instance = value;
         }
 
-        private static API<T> qLTKB;
-        public static API<T> QLTKB
+        private API()
         {
-            get { if (qLTKB == null) qLTKB = new API<T>("https://quanlytkb.azurewebsites.net/"); return qLTKB; }
-            set => qLTKB = value;
+            _httpClient = new HttpClient() { BaseAddress = new Uri(URL_API) }; 
         }
-
-        private static API<T> qLHocSinh;
-        public static API<T> QLHocSinh
-        {
-            get { if (qLHocSinh == null) qLHocSinh = new API<T>("https://quanlyhocsinh.azurewebsites.net/"); return qLHocSinh; }
-            set => qLHocSinh = value;
-        }
-
-
-        public API(string url)
-        {
-            httpClient = new HttpClient() { BaseAddress = baseUrl };
-            //AddHeaders(httpClient, headers);
-        }
-
         public async Task<T> GetAsync(string url, Dictionary<string, string> headers = null)
         {
             try
             {
-                HttpResponseMessage response = httpClient.GetAsync(url).Result;
+                HttpResponseMessage response = _httpClient.GetAsync(url).Result;
                 string responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return JsonConvert.DeserializeObject<T>(responseContent);
+                    _data = JsonConvert.DeserializeObject<T>(responseContent);
                 }
-                throw new Exception(response.ReasonPhrase);
+
+                return _data;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message.ToString());
+            }
+        }
+
+        public async Task<T> PostAsync(string url, T request, Dictionary<string, string> headers = null)
+        {
+            try
+            { 
+                HttpContent httpContent = null;
+                if (request != null)
+                {
+                    string json = JsonConvert.SerializeObject(request);
+                    httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+                }
+                HttpResponseMessage responseMessage = await _httpClient.PostAsync(url, httpContent);
+                var responseContent = await responseMessage.Content.ReadAsStringAsync();
+
+                if (responseMessage.IsSuccessStatusCode)
+                {
+                    _data = JsonConvert.DeserializeObject<T>(responseContent);
+                }
+
+                return _data;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message.ToString());
+            }
+        }
+        public async Task<string> DeleteAsync(string url, Dictionary<string, string> headers = null)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync(url);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                 
+                if (response.IsSuccessStatusCode)
+                {
+                    return "OK"; 
+                } 
+                return "Error";
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message.ToString());
+            }
+        }
+        public async Task<T> PutAsync(string url, T request, Dictionary<string, string> headers = null)
+        {
+            try
+            { 
+                HttpContent httpContent = null;
+                if (request != null)
+                {
+                    string json = JsonConvert.SerializeObject(request);
+                    httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+                }
+
+                HttpResponseMessage responseMessage = await _httpClient.PutAsync(url, httpContent);
+
+                var responseContent = await responseMessage.Content.ReadAsStringAsync();
+
+                if (responseMessage.IsSuccessStatusCode)
+                {
+                    _data = JsonConvert.DeserializeObject<T>(responseContent);
+                } 
+                return _data;
             }
             catch (Exception ex)
             {
