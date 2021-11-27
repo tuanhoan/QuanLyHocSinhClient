@@ -1,0 +1,25 @@
+﻿@page "/inputscores"
+<MudGrid Class="mt-5">
+    <MudItem>
+        <MudText Typo="Typo.h5">Môn học</MudText>
+    </MudItem>
+    <MudItem>
+        <MudTextField @bind-Value="@student.Email" Label="Miệng" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    <MudItem>
+        <MudTextField @bind-Value="@student.Email" Label="15p" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    <MudItem>
+        <MudTextField @bind-Value="@student.Email" Label="60p" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    <MudItem>
+        <MudTextField @bind-Value="@student.Email" Label="Học kì" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    <MudItem>
+        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small" >Save</MudButton>
+    </MudItem>
+</MudGrid>
+
+@code {
+    Student student = new Student();
+}

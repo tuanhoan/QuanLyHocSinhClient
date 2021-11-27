@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using QuanLyHocSinhClient.Model;
+using QuanLyHocSinhClient.Models;
 
 namespace QuanLyHocSinhClient.Models
 {
@@ -21,6 +21,12 @@ namespace QuanLyHocSinhClient.Models
         public string Image { get; set; }
         public string NameParent { get; set; }
         public string PhoneNumberParent { get; set; }
+        public string CMND { get; set; }
+        public string PlaceOfIssue { get; set; }
+        public string DateOfIssue { get; set; }
+        public string Nationality { get; set; }
+        public string Folk { get; set; }
+        public string Religion { get; set; }
         public int ClassId { get; set; }
         public virtual Class ClassNavigation { get; set; }
         public  virtual  ICollection<Comment> Comments { get; set; }

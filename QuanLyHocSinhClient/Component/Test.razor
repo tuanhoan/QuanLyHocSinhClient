@@ -1,6 +1,13 @@
 ﻿@page "/timetable"
 @using System.Globalization
-@*<TitleTimetable></TitleTimetable>*@
+<MudGrid Class="mt-2">
+    <MudItem>
+        <MudText Typo="Typo.h4"><b>Thời khóa biểu</b></MudText>
+    </MudItem>
+    <MudItem>
+        <MudIcon Icon="@Icons.Material.Filled.AutoStories" Size="Size.Large"></MudIcon>
+    </MudItem>
+</MudGrid>
 @for (int i = 0; i < 6; i++)
 {
     int index = i;

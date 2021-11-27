@@ -1,0 +1,45 @@
+﻿@page "/login"
+
+<h3>Login</h3>
+<div style="max-width: 400px;">
+    <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="Email" Class="mt-3"
+                              @bind-Value="model.UserName" For="@(() => model.UserName)" />
+                <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
+                              @bind-Value="model.Password" For="@(() => model.Password)" InputType="InputType.Password" />
+
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </EditForm>
+</div>
+@code {
+    Account model = new Account();
+    bool success;
+    private async void OnValidSubmit(EditContext context)
+    {
+
+        success = true;
+        StateHasChanged();
+        var kq = await API<Account>.Instance.Login("api/Authenticate/Login", model);
+        API<Account>.token = kq;
+        API<Account>.Instance.AddHeaders(API<Account>.Instance._httpClient, API<Account>.headers);
+        var a = await API<Student>.Instance.GetAsync("api/Students");
+    }
+    protected async override Task OnInitializedAsync()
+    {
+        model.UserName = "tuanhoan";
+        model.Password = "123456";
+        var kq = await API<Account>.Instance.Login("api/Authenticate/Login", model);
+        API<Account>.token = kq;
+        API<Account>.Instance.AddHeaders(API<Account>.Instance._httpClient, API<Account>.headers);
+        var a = await API<Student>.Instance.GetAsync("api/Students");
+
+    }
+
+}

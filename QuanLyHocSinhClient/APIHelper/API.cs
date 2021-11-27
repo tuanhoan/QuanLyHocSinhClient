@@ -6,15 +6,18 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using QuanLyHocSinhClient.Models;
 
 namespace QuanLyHocSinhClient.APIHelper
 {
     public class API<T>
     {
-        readonly HttpClient _httpClient;
+        public readonly HttpClient _httpClient;
         private static API<T> instance;
         private T _data;
         private string URL_API = "https://quanlyhocsinh.azurewebsites.net/";
+        public static Dictionary<string, string> headers;
+        public static string token = null;
         public static API<T> Instance
         {
             get { return instance ??= new API<T>(); }
@@ -23,7 +26,48 @@ namespace QuanLyHocSinhClient.APIHelper
 
         private API()
         {
-            _httpClient = new HttpClient() { BaseAddress = new Uri(URL_API) }; 
+            _httpClient = new HttpClient() { BaseAddress = new Uri(URL_API) };
+            AddHeaders(_httpClient, headers);
+        }
+        public async Task<string> Login(string url, Account request, Dictionary<string, string> headers = null)
+        {
+            try
+            {
+                HttpContent httpContent = null;
+                if (request != null)
+                {
+                    string json = JsonConvert.SerializeObject(request);
+                    httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+                }
+                HttpResponseMessage responseMessage= await _httpClient.PostAsync(url, httpContent);
+                var responseContent = await responseMessage.Content.ReadAsStringAsync();
+
+                if (responseMessage.IsSuccessStatusCode)
+                {
+                    return responseContent.Replace("\"", "");
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message.ToString());
+            }
+        }
+        public void AddHeaders(HttpClient httpClient, Dictionary<string, string> headers)
+        {
+            httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            }
+            //No additional headers to be added
+            if (headers == null)
+                return;
+            foreach (KeyValuePair<string, string> current in headers)
+            {
+                httpClient.DefaultRequestHeaders.Add(current.Key, current.Value);
+            }
         }
         public async Task<T> GetAsync(string url, Dictionary<string, string> headers = null)
         {
@@ -114,5 +158,6 @@ namespace QuanLyHocSinhClient.APIHelper
                 throw new Exception(ex.Message.ToString());
             }
         }
+
     }
 }
