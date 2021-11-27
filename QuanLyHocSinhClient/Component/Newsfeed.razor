@@ -1,5 +1,12 @@
 ﻿@page "/dashboard"
-<TitleNewsfeed></TitleNewsfeed>
+<MudGrid Class="mt-2">
+    <MudItem>
+        <MudText Typo="Typo.h4"><b>Thông Báo</b></MudText>
+    </MudItem>
+    <MudItem>
+        <MudIcon Icon="@Icons.Material.Filled.NotificationsActive" Size="Size.Large"></MudIcon>
+    </MudItem>
+</MudGrid>
 
 <MudCard>
     <MudCardContent>
@@ -8,7 +15,7 @@
         <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
     </MudCardContent>
     <MudCardActions>
-        <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
+        <MudButton Variant="Variant.Text" Color="Color.Primary" >Learn More</MudButton>
     </MudCardActions>
 </MudCard>
 
@@ -17,5 +24,9 @@
 
 
 @code {
-    
+    void OpenNewsfeed()
+        {
+           
+        }
+
 }

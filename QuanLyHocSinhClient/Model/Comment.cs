@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using QuanLyHocSinhClient.Models;
 
-namespace QuanLyHocSinhClient.Model
+namespace QuanLyHocSinhClient.Models
 {
     public class Comment
     {
-        public Guid studentId { get; set; }
-        public DateTime createdAt { get; set; }
-        public  int newsFeedId { get; set; }
+        public Guid StudentId { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public  int NewsFeedId { get; set; }
         public  string Content { get; set; }
         public virtual Student StudentNavigation { get; set; }
         public virtual NewsFeed NewsFeedNavigation { get; set; } 

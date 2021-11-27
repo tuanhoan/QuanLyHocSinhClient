@@ -11,6 +11,7 @@ namespace QuanLyHocSinhClient
 {
     public class Program
     {
+        public static string token = null;
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
