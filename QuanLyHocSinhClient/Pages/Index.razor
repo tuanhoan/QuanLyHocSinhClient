@@ -1,4 +1,5 @@
 ﻿@page "/"
+@inject NavigationManager Navigation
 @using System.Globalization
 
 <h3>Tuổi trẻ trường THPT Pleiku với các hoạt động, phong trào Chào mừng kỉ niệm lần thứ 39 ngày Nhà giáo Việt Nam (20/11/1982 – 20/11/2021)</h3>
@@ -15,6 +16,7 @@
 {
     protected override Task OnInitializedAsync()
     {
+       
         string date = "25112021";
         DateTime dt = DateTime.ParseExact("24012013", "ddMMyyyy", CultureInfo.InvariantCulture);
         return base.OnInitializedAsync();

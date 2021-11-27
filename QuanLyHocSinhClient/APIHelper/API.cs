@@ -16,11 +16,10 @@ namespace QuanLyHocSinhClient.APIHelper
         private static API<T> instance;
         private T _data;
         private string URL_API = "https://quanlyhocsinh.azurewebsites.net/";
-        public static Dictionary<string, string> headers;
-        public static string token = null;
+        public static Dictionary<string, string> headers; 
         public static API<T> Instance
         {
-            get { return instance ??= new API<T>(); }
+            get { if (instance == null) instance = new API<T>(); return instance; }
             set => instance = value;
         }
 
@@ -57,9 +56,9 @@ namespace QuanLyHocSinhClient.APIHelper
         public void AddHeaders(HttpClient httpClient, Dictionary<string, string> headers)
         {
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-            if (!string.IsNullOrEmpty(token))
+            if (!string.IsNullOrEmpty(Program.token))
             {
-                httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+                httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + Program.token);
             }
             //No additional headers to be added
             if (headers == null)
