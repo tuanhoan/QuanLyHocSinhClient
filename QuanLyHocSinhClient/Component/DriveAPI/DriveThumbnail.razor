@@ -1,0 +1,117 @@
+﻿@inject GoogleDriveServices DriveServices
+ 
+<MudText Typo="Typo.caption">Chọn tài liệu:</MudText>
+<div class="d-flex flex-wrap">
+    @if (_data.Count == 0 && isEditing == false)
+    {
+        @foreach (var item in ListPath)
+        {
+            <div style="width:@($"{Width}%")">
+                <MudPaper Elevation="6" Class="mr-2" Outlined="true">
+                    <div class="d-flex justify-center">
+                        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Small" />
+                    </div>
+                </MudPaper>
+            </div>
+        }
+    }
+    else
+    {
+        @foreach (var item in _data)
+        {
+
+            if (!item.PlaceHolder.Contains("https://"))
+            {
+                <MudLink Href="@item.Link"
+                         Underline="Underline.None"
+                         Target="_blank">
+                    @item.PlaceHolder
+                </MudLink>
+                <span>&nbsp;|&nbsp;</span>
+            }
+            else
+            {
+                <div style="width:@($"{Width}%");" class="mr-2">
+                    <MudPaper Elevation="2" Class="pa-1">
+                        <div @onclick="@(()=> {
+                                             _imgSource = item.Link;
+                                             _isOverlayTrigger = true;
+                                         })" style="width:100%;">
+                            <img src="@item.PlaceHolder" style="width:100%;" alt="drivecontent" />
+                        </div>
+                    </MudPaper>
+                </div>
+            }
+            if (IsDelete == true)
+            {
+                <MudItem Class="ml-1">
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                   Color="Color.Error"
+                                   OnClick="@(()=>HandDelete(item))"
+                                   Size="Size.Small">
+                    </MudIconButton>
+                </MudItem>
+            }
+        }
+    }
+</div>
+<MudOverlay DarkBackground="true" Visible="_isOverlayTrigger" ZIndex="9999">
+    <MudPaper Class="pa-2">
+        @if (_imgSource != null)
+        {
+            <img src="@_imgSource" loading="lazy" style="max-width:90vw; max-height:90vh;" alt="Ảnh phóng to" />
+        }
+        <MudIconButton Icon="@Icons.Material.Filled.Close"
+                       Style="position: absolute; top: -.75rem; right: -.75rem; background-color: #fff"
+                       Size="@Size.Small"
+                       OnClick="@(() => _isOverlayTrigger = false)"></MudIconButton>
+    </MudPaper>
+</MudOverlay>
+@code {
+    [Parameter] public List<string> ListPath { get; set; }
+    [Parameter]public int Id { get; set; }
+    [Parameter]public UploadClassify Classify { get; set; }
+    [Parameter] public int Width { get; set; } = 10;
+
+    [Parameter] public bool IsDelete { set; get; }
+    [Parameter] public EventCallback<List<string>> OnGetListPathDelete { set; get; }
+
+    List<(string Link, string PlaceHolder, string Path)> _data = new();
+
+    List<string> ListPathsDelete = new();
+
+    bool isEditing = false;
+    bool _isLoading = true;
+    bool _isOverlayTrigger;
+
+    string _imgSource;
+
+    void ToggleOverlay(bool value)
+    {
+        _isOverlayTrigger = value;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _data = await DriveServices.GetFilesMetadataAsync(ListPath, Classify, Id);
+    }
+    //protected override async Task OnAfterRenderAsync(bool firstRender)
+    //{
+    //    if (firstRender)
+    //    {
+    //        await Task.WhenAll(_data).ConfigureAwait(false);
+    //        _isLoading = false;
+    //        await InvokeAsync(StateHasChanged);
+    //    }
+    //    await base.OnAfterRenderAsync(firstRender);
+    //}
+
+    void HandDelete((string Link, string PlaceHolder, string Path) data)
+    {
+        isEditing = true;
+        _data.Remove(data);
+        InvokeAsync(StateHasChanged);
+        ListPathsDelete.Add(data.Path);
+        OnGetListPathDelete.InvokeAsync(ListPathsDelete);
+    }
+}

@@ -1,0 +1,81 @@
+﻿@page "/newsfeed/{Id:int}"
+@inject GoogleDriveServices GoogleDriveServices
+@using System.Globalization
+
+<div class="container">
+    @if (_newsFeed == null)
+    {
+        <p>Loading</p>
+    }
+    else
+    {
+        <h3>@_newsFeed.Title</h3>
+        <MudCardMedia Image="@_newsFeed.Image"></MudCardMedia>
+        <p>@_newsFeed.Content</p>
+        <h2>Comment</h2>
+
+        <div class="mt-8 grey lighten-4" id="paste-block">
+            <MudTextField T="string" Label="Multiline" Variant="Variant.Text" @bind-Value="comment.Content" Lines="5" />
+            <MudGrid>
+                <MudItem xs="10">
+                    <DriveUpload Id="@_newsFeed.Id" @ref="_driveUpload" Classify="UploadClassify.CustomerData"></DriveUpload>
+                </MudItem>
+                <MudItem xs="2" Class="d-flex flex-row-reverse">
+                    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="HandleSubmit">Gửi</MudButton>
+                </MudItem>
+            </MudGrid>
+        </div>
+        @foreach (var item in comments)
+        {
+            <CMTItem Data="item"></CMTItem>
+        }
+
+        <br/>
+        <br/>
+        <br/>
+    }
+</div>
+
+
+
+@code{
+    [Parameter] public  int Id { get; set; }
+    //[Parameter] public NewsFeed NewsFeed { get; set; } 
+    NewsFeed _newsFeed = new NewsFeed();
+    Comment comment = new Comment();
+    List<Comment> comments = new List<Comment>();
+
+
+    DriveUpload _driveUpload;
+    bool EditorEnabled = true;
+
+    List<string> _listSource = new();
+
+    public async Task HandleSubmit()
+    {
+        if (_driveUpload.IsUpload)
+        {
+            await _driveUpload.UploadAsync();
+            if (_driveUpload.IsUploadComplete) // check upload error: true when upload success; false when upload failed
+            {
+                foreach (var item in _driveUpload.ResultPath)
+                {
+                    this.comment.ImgSources = item + "|";
+                }
+            }
+            else
+                return;
+        }
+        this.comment.NewsFeedId = _newsFeed.Id;
+        this.comment.StudentId = Program.Student.Id;
+
+        await API<Comment>.Instance.PostAsync("/api/Comment", comment);
+        comment = new Comment();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        _newsFeed = await API<NewsFeed>.Instance.GetAsync($"/api/NewsFeed/{Id}");
+        await GoogleDriveServices.PrepareFolderId(_newsFeed.Id, UploadClassify.CustomerData);
+        comments = await API<List<Comment>>.Instance.GetAsync($"/api/Comment/ByNewsFeedId/{Id}");
+    }
+}

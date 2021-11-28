@@ -1,0 +1,23 @@
+﻿@page "/"
+<h3>List</h3>
+@if (newsFeeds == null)
+{
+    <p>Loading</p>
+}
+else
+{
+    foreach (var item in newsFeeds)
+    {
+        <ItemNewFeed Data="item" ></ItemNewFeed>
+    }
+}
+
+
+@code {
+    List<NewsFeed> newsFeeds = new List<NewsFeed>();
+    protected override async Task OnInitializedAsync()
+    {
+        newsFeeds = await API<List<NewsFeed>>.Instance.GetAsync("api/newsfeed");
+    }
+
+}

@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager Navigation
+@inject GoogleDriveServices GoogleDriveServices
 <MudThemeProvider />
 
 <MudLayout>
@@ -12,7 +13,7 @@
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu></NavMenu>
     </MudDrawer>
-    <MudMainContent Class="container">
+    <MudMainContent Class="px-3">
         @Body
     </MudMainContent>
 </MudLayout>
@@ -22,13 +23,21 @@
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
-       
+
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnInitializedAsync()
+    {
+        if (Program.token == null)
+            Navigation.NavigateTo("/login", true); 
+    }
+
+    protected override async void OnAfterRender(bool firstRender)
     {
         if (Program.token == null)
             Navigation.NavigateTo("/login", true);
+
+
     }
 
 }

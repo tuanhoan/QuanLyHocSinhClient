@@ -1,0 +1,31 @@
+﻿<div class="ml-2" >
+    <div class="d-flex flex-wrap">
+        <strong class="blue-text text-darken-4 mr-1">@Data.StudentNavigation.Name</strong>
+        <MCGTimePassing TimeValue="@Data.CreatedAt"></MCGTimePassing> 
+    </div>
+    <div>
+        <MudText Typo="Typo.body2" Class="ql-editor">@((MarkupString)Data.Content)</MudText>
+        
+        @if(_listImage.Count>0)
+        {
+            <DriveThumbnail Classify="UploadClassify.CustomerData" Id="Data.NewsFeedId" ListPath="@_listImage"></DriveThumbnail>
+        }
+        
+    </div>
+</div>
+@code {
+    [Parameter] public Comment Data { get; set; }
+    List<string> _listImage = new List<string>();
+    protected override void OnInitialized()
+    {
+        if (Data.ImgSources != null)
+        {
+            foreach (var item in Data.ImgSources.Split("|"))
+            {
+                _listImage.Add(item);
+            }
+            _listImage.RemoveAt(_listImage.Count-1);
+        } 
+    }
+
+}

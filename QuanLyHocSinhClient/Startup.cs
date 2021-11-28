@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using QuanLyHocSinhClient.Services;
+using QuanLyHocSinhClient.Services.Interface;
 
 namespace QuanLyHocSinhClient
 {
@@ -29,7 +31,10 @@ namespace QuanLyHocSinhClient
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
+            services.AddScoped<IFileIdInteractive, FileIdServices>();
+            services.AddScoped<IFolderIdContainer, FolderIdContainer>();
+            services.AddScoped<GoogleDriveServices>();
+            services.AddScoped<ReadExcel>();
             services.AddMudServices();
         }
 

@@ -40,6 +40,7 @@
         if (Program.token != null)
         {
             Navigation.NavigateTo("/", true);
+            (Program.Student, Program.Teacher) = await API<(Student, Teacher)>.Instance.GetAsync($"api/Authenticate/{model.UserName}");
         }
         else
         {

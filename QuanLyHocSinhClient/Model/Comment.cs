@@ -12,6 +12,7 @@ namespace QuanLyHocSinhClient.Models
         public DateTime CreatedAt { get; set; }
         public  int NewsFeedId { get; set; }
         public  string Content { get; set; }
+        public string ImgSources { get; set; }
         public virtual Student StudentNavigation { get; set; }
         public virtual NewsFeed NewsFeedNavigation { get; set; } 
     }

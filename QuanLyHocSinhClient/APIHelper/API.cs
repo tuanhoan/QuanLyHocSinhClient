@@ -71,7 +71,7 @@ namespace QuanLyHocSinhClient.APIHelper
         public async Task<T> GetAsync(string url, Dictionary<string, string> headers = null)
         {
             try
-            {
+            { 
                 HttpResponseMessage response = _httpClient.GetAsync(url).Result;
                 string responseContent = await response.Content.ReadAsStringAsync();
 

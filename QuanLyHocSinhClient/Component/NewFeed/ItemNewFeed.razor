@@ -1,0 +1,26 @@
+﻿<MudCard>
+    <MudGrid Spacing="3" Justify="Justify.Center">
+        <MudItem xs="6" sm="4">
+            <MudCardMedia Image="@Data.Image" Height="200" />
+        </MudItem>
+        <MudItem xs="6" sm="8">
+            <MudCardContent>
+                <MudLink Href="@($"newsfeed/{Data.Id}")" Underline="Underline.Hover">@Data.Title</MudLink>
+                <MudText Typo="Typo.body2">@Data.Content</MudText>
+            </MudCardContent>
+        </MudItem>
+    </MudGrid> 
+</MudCard>
+
+@code
+{
+    [Parameter] public NewsFeed Data { get; set; }
+    protected override void OnInitialized()
+    {
+        if (Data.Content.Length > 200)
+        {
+            Data.Content = Data.Content.Substring(0, 200) + " ...";
+        }
+        base.OnInitialized();
+    }
+}

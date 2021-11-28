@@ -1,0 +1,97 @@
+﻿@inject GoogleDriveServices DriveServices
+@inject ISnackbar Snackbar
+
+
+<InputFile id="@Label"
+           OnChange="Onchange" class="custom-file-input" multiple hidden />
+<div style="z-index:1000;">
+    <label for="@Label"
+           style="cursor:pointer; margin-top:5px; margin-left:2px">
+        @if (_isUploading)
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Small" />
+        }
+        else
+        {
+            if (IsUploadComplete)
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" />
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Filled.AttachFile" />
+            }
+        }
+    </label>
+    @if (Files?.Count > 0)
+    {
+        <span> | </span>
+        foreach (var item in Files)
+        {
+            <span>
+                @item.Name
+                <MudIconButton Size="Size.Small"
+                               Icon="@Icons.Material.Filled.Delete"
+                               OnClick="@(() =>
+                                            {
+                                                Files.Remove(item);
+                                                IsUploadChange.InvokeAsync(Files.Count);
+                                            })">
+                </MudIconButton> |
+            </span>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public string Path { get; set; }
+    [Parameter] public int Id { get; set; }
+    [Parameter] public UploadClassify Classify { get; set; }
+
+    /// <summary>Use Label Convention For folderId direction.
+    ///     <para>You need name prefix Label with 'order' so that the file will go into the order folder</para>
+    /// </summary>
+    [Parameter] public string Label { get; set; } = "file-upload";
+
+    [Parameter] public EventCallback<int> IsUploadChange { get; set; }
+    bool _isUploading;
+    public bool IsUploadComplete;
+    public bool IsUpload => Files.Count > 0 ? true : false;
+    public string FileId;
+
+    public List<IBrowserFile> Files = new();
+
+    public List<string> ResultPath = new();
+
+    void Onchange(InputFileChangeEventArgs e)
+    {
+        Files.AddRange(e.GetMultipleFiles(10));
+        IsUploadChange.InvokeAsync(Files.Count);
+    }
+    public async Task UploadAsync()
+    {
+        _isUploading = true;
+
+        await InvokeAsync(StateHasChanged);
+
+
+        ResultPath = await DriveServices.UploadRangeAsync(Files, Classify, Id);
+
+
+
+        _isUploading = false;
+        IsUploadComplete = ResultPath.Count == 0 ? false : true;
+        await InvokeAsync(StateHasChanged);
+    }
+    public void Refesh()
+    {
+        _isUploading = false;
+        IsUploadComplete = false;
+        Files = new();
+        ResultPath = new();
+    }
+    //void IDisposable.Dispose()
+    //{
+    //    System.Diagnostics.Debug.WriteLine("Disposed");
+    //}
+}
