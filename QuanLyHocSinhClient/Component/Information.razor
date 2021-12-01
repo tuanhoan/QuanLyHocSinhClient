@@ -80,13 +80,6 @@
 @code {
     DateTime? date = DateTime.Today;
     Student student = new Student();
-    List<Student> students = new List<Student>();
-    //{
-    //    Address = "Hà Tĩnh",
-    //    Name = "Nguyễn Tuấn Anh",
-    //    PhoneNumber = "0948502258",
-    //    Email = "ntnanh.hutech@gmail.com"
-    //};
     private async void OnValidSubmit()
     {
 
@@ -95,11 +88,7 @@
     }
     protected async override Task OnInitializedAsync()
     {
-        Guid Id = new Guid("e37ea4e6-a000-4fb5-dbac-08d9ae862a65");
-        await base.OnInitializedAsync();
-        //listModel = await API<List<Schedule>>.QLTKB.GetAsync("/api/Su");
-        students = await API<List<Student>>.Instance.GetAsync("/api/Students");
-        student = students.Where(a => a.Id == Id).FirstOrDefault();
+        student = Program.Student;
 
     }
     IList<IBrowserFile> files = new List<IBrowserFile>();
