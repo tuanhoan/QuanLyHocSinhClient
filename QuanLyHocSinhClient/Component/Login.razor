@@ -6,26 +6,31 @@
 
 <div class="container-fluid" >
     <div style="max-width: 400px" class="container justify-content-center align-items-center">
-        <EditForm Model="@model" OnSubmit="OnValidSubmit"> 
-            <MudCard>
-                <MudCardContent>
-                    <MudTextField Label="First name" HelperText="Max. 8 characters"
-                                  @bind-Value="model.UserName" /> 
-                    <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
-                                  @bind-Value="model.Password" For="@(() => model.Password)" InputType="InputType.Password" /> 
-                    <p>@login</p>
-                </MudCardContent>
-                <MudCardActions>
-                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Register</MudButton>
-                </MudCardActions>
-            </MudCard> 
-        </EditForm>
+        <MudGrid Class="mt-5">
+            <h3>Welcome!</h3>
+        </MudGrid>
+ 
+            <EditForm Model="@model" OnSubmit="OnValidSubmit">
+                <MudCard>
+                    <MudCardContent>
+                        <MudTextField Label="First name" HelperText="Max. 8 characters"
+                                      @bind-Value="model.UserName" />
+                        <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
+                                      @bind-Value="model.Password" For="@(() => model.Password)" InputType="InputType.Password" />
+                        <p>@login</p>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Đăng nhập</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </EditForm>
+       
+        
     </div>
 </div>
 
 @code {
     Account model = new Account();
-    bool success;
     string login = "";
     private async void OnValidSubmit()
     {
