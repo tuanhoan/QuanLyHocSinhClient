@@ -23,7 +23,7 @@
     [Parameter] public string title { get; set; }
     [Parameter] public List<ScheduleDetail> scheduleDetails { get; set; }
     List<Teacher> teachers = new List<Teacher>();
-    string name;
+    
     protected async override Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();

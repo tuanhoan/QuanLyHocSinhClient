@@ -1,0 +1,81 @@
+﻿@page "/inputscores"
+<MudSelect T="string" Label="Chọn lớp" Variant="Variant.Filled">
+    @foreach (var item in classes)
+    {
+        <MudSelectItem Value="@item.Name"></MudSelectItem>
+        <MudSelect T="string" Label="Chọn học sinh" Variant="Variant.Filled">
+            @foreach (var item1 in students)
+            {
+                if (item.Id == item1.ClassId)
+                {
+                    <MudSelectItem Value="@item1.Name"></MudSelectItem>
+                }
+
+            }
+        </MudSelect>
+    }
+</MudSelect>
+
+
+<MudGrid Class="mt-5">
+
+    
+    <MudItem xs="12" sm="10">
+        @foreach (var item in subjects)
+        {
+
+            var diemMieng = scores.FirstOrDefault(x => x.SubjectId == item.Id && x.TestTypeId == 5)?.Point;
+            var diem15p = scores.FirstOrDefault(x => x.SubjectId == item.Id && x.TestTypeId == 2)?.Point;
+            var diem60p = scores.FirstOrDefault(x => x.SubjectId == item.Id && x.TestTypeId == 3)?.Point;
+            var diemHocki = scores.FirstOrDefault(x => x.SubjectId == item.Id && x.TestTypeId == 4)?.Point;
+            double diemTrungbinh = Math.Round(Convert.ToDouble((diemMieng + diem15p + diem60p * 2 + diemHocki * 3) / 7), 2);
+            <MudItem xs="12" sm="2">
+                <MudField Label="" Variant="Variant.Text">@item.Name</MudField>
+            </MudItem>
+            <MudItem xs="12" sm="2">
+                <MudTextField @bind-Value="@diemMieng" Label="Miệng" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="2">
+                <MudTextField @bind-Value="@diem15p" Label="15p" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="2">
+                <MudTextField @bind-Value="@diem60p" Label="60p" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="2">
+                <MudTextField @bind-Value="@diemHocki" Label="Học kì" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="2">
+                <MudTextField @bind-Value="@diemTrungbinh" Label="Trung bình" Variant="Variant.Text" Disabled="true"></MudTextField>
+            </MudItem>
+        }
+        </MudItem>
+        <MudItem xs="12" sm="2">
+         
+                    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small">Save</MudButton>
+            
+        </MudItem>
+
+
+        
+    
+
+</MudGrid>
+
+@code {
+
+    Student student = new Student();
+    List<Subject> subjects = new List<Subject>();
+    List<Student> students = new List<Student>();
+    List<Score> scores = new List<Score>();
+    List<Class> classes = new List<Class>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        subjects = await API<List<Subject>>.Instance.GetAsync("/api/Subjects");
+        students = await API<List<Student>>.Instance.GetAsync("/api/Students");
+        classes = await API<List<Class>>.Instance.GetAsync("/api/Classs");
+        scores = await API<List<Score>>.Instance.GetAsync($"/api/Scores/ScoresByStudentAndSemester/{students[0].Id}/{1}");
+
+    }
+}

@@ -22,7 +22,8 @@
             <MudTd DataLabel="@dataLabel">@scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == testTypeId)?.Point</MudTd>
 
         }
-        <MudTd DataLabel="">@AverageScore(scores)</MudTd>
+        
+
 
     </RowTemplate>
 </MudTable>
@@ -41,13 +42,13 @@
         subjects = await API<List<Subject>>.Instance.GetAsync("api/subjects");
         scores = await API<List<Score>>.Instance.GetAsync($"/api/Scores/ScoresByStudentAndSemester/{studentId}/{semesterId}");
     }
-    double AverageScore(List<Score> scores)
+    double AverageScore(int i, int j)
     {
         double avrg=0;
         foreach(var item in scores)
-        {
-            
-            avrg = item.Point *item.TestTypeNavigation.ScoreFactor;
+        { 
+            if(item.TestTypeId== testTypes[i].Id && subjects[i].Id==item.SubjectId)
+            avrg += item.Point *item.TestTypeNavigation.ScoreFactor;
         }
         return avrg;
     }

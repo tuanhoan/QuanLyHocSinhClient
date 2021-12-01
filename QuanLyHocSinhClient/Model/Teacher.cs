@@ -17,9 +17,11 @@ namespace QuanLyHocSinhClient.Models
         public int SubjectId { get; set; }
         public virtual Subject SubjectNavigation { get; set; }
         public virtual ICollection<Class> Classes { get; set; }
+        public virtual ICollection<Homework> Homeworks { get; set; }
         public Teacher()
         {
             Classes = new HashSet<Class>();
+            Homeworks = new HashSet<Homework>();
         }
     }
 }

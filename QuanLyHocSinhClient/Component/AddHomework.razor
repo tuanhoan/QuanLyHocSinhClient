@@ -1,0 +1,36 @@
+﻿@page "/addHomework"
+<h3>AddHomework</h3>
+
+    <MudGrid Class="mt-4">
+        <MudTextField Label="Tiêu đề" @bind-Value="@homework.Title" Variant="Variant.Text"></MudTextField>
+    </MudGrid>
+    <MudGrid Class="mt-4">
+        <MudTextField Label="Nội dung" @bind-Value="@homework.Content" Variant="Variant.Text"></MudTextField>
+    </MudGrid>
+    <MudGrid Class="mt-4">
+        <MudCard Style="width:100%">
+            <MudCardActions>
+                <InputFile id="fileInput" OnChange="UploadFiles" hidden multiple />
+                <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Secondary" for="fileInput">Thêm ảnh</MudButton>
+            </MudCardActions>
+            <MudCardMedia Image="@homework.Image"></MudCardMedia>
+        </MudCard>
+        
+    </MudGrid>
+    <MudGrid Class="mt-4">
+        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small">Save</MudButton>
+    </MudGrid>
+
+
+@code {
+    Homework homework = new Homework();
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+    private void UploadFiles(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles())
+        {
+            files.Add(file);
+        }
+        //TODO upload the files to the server
+    }
+}

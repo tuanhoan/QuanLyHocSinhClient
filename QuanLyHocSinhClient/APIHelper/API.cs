@@ -12,7 +12,7 @@ namespace QuanLyHocSinhClient.APIHelper
 {
     public class API<T>
     {
-        readonly HttpClient _httpClient;
+        public readonly HttpClient _httpClient;
         private static API<T> instance;
         private T _data;
         private string URL_API = "https://quanlyhocsinh.azurewebsites.net/";
