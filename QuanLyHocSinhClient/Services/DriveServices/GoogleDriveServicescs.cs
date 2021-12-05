@@ -133,7 +133,7 @@ namespace QuanLyHocSinhClient.Services
                 tasks.Add(GetFileMetadataAsync(item));
             }
             await Task.WhenAll(tasks);
-            return tasks.Select(c => c.Result).ToList();
+            return tasks.Select(c => c.Result)?.ToList();
         }
         public async Task<(string Link, string PlaceHolder, string Path)> GetFileMetadataAsync(string path)
         {

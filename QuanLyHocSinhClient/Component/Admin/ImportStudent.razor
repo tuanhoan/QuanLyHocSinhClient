@@ -1,14 +1,36 @@
 ﻿@page "/std"
+@using QuanLyHocSinhClient.Services.ExcelService
 @inject ReadExcel ReadExcel
 
+
+
 <InputFile id="fileInput" OnChange="UploadFiles" hidden multiple />
-<MudButton HtmlTag="label"
-           Variant="Variant.Filled"
-           Color="Color.Primary"
-           StartIcon="@Icons.Filled.CloudUpload"
-           for="fileInput">
-    Upload Files
-</MudButton> 
+<div class="d-flex">
+    <MudButton HtmlTag="label"
+               Variant="Variant.Filled"
+               Color="Color.Primary"
+               StartIcon="@Icons.Filled.CloudUpload"
+               for="fileInput">
+        Upload Files
+    </MudButton>
+    @if (classes != null)
+    {
+        <MudSelect T="int" Label="Lớp Học" Strict="true" Variant="Variant.Outlined" @bind-Value="@classId" Format="F2" AnchorOrigin="Origin.BottomCenter">
+            @foreach (var item in classes)
+            {
+                <MudSelectItem T="int" Value="item.Id">@item.Name</MudSelectItem>
+            }
+        </MudSelect>
+    }
+    <MudButton HtmlTag="label"
+               Variant="Variant.Filled"
+               Color="Color.Primary"
+               OnClick="Upload"
+               StartIcon="@Icons.Filled.CloudUpload">
+        Comfirm
+    </MudButton>
+</div>
+
 
 @if (files != null)
 {
@@ -22,18 +44,65 @@
         }
     </MudList>
 }
+
+<MudTable Items="@_listStd" Hover="true" Breakpoint="Breakpoint.Sm" Loading="false" LoadingProgressColor="Color.Info">
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>BirthDay</MudTh>
+        <MudTh>Giới tính</MudTh>
+        <MudTh>Email</MudTh>
+        <MudTh>PhoneNumber</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Name</MudTd>
+        <MudTd DataLabel="Sign">@context.Address</MudTd>
+        <MudTd DataLabel="Name">@context.Sex</MudTd>
+        <MudTd DataLabel="Position">@context.Email</MudTd>
+        <MudTd DataLabel="Molar mass">@context.PhoneNumber</MudTd>
+    </RowTemplate>
+</MudTable>
+
+
+
 @code
 {
     IList<IBrowserFile> files = new List<IBrowserFile>();
+    List<Student> _listStd = new List<Student>();
+    List<Class> classes = new List<Class>();
+    int classId = 0;
     private async void UploadFiles(InputFileChangeEventArgs e)
     {
         foreach (var file in e.GetMultipleFiles())
         {
             files.Add(file);
         }
-       await ReadExcel.ReadFromExcel<Student>(files[0], true);
-    //TODO upload the files to the server
+        _listStd = await ReadExcel.ReadFromExcel(files[0], true);
+        StateHasChanged();
     }
 
+    private async void Upload()
+    {
+        foreach (var item in _listStd)
+        {
+            item.ClassId = classId;
+            item.CMND = "";
+            item.NameParent = "";
+            item.DateOfIssue = DateTime.Now.ToString("dd/MM/yyyy");
+            item.Folk = "";
+            item.Image = "";
+            item.Religion = "";
+            item.PlaceOfIssue = "";
+            item.PhoneNumberParent = "";
+            item.Nationality = "";
+        }
+        var std = await API<List<Student>>.Instance.PostAsync("api/Students/addRange", _listStd);
+        _listStd.Clear();
+        files.Clear();
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        classes = await API<List<Class>>.Instance.GetAsync("/api/Classs");
     }
 }

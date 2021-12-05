@@ -1,11 +1,12 @@
 ﻿@page "/information"
 @inject ISnackbar Snackbar
+@inject GoogleDriveServices DriveServices
 <MudGrid Class="mt-10">
     <MudItem xs="6" sm="3">
         <MudCard>
-            <MudCardMedia Image="@student.Image" Height="250" />
+            <MudCardMedia Image="@_data.FirstOrDefault().Item2" Height="250" />
             <MudCardContent>
-                <MudText Typo="Typo.h5">@student.Name</MudText>
+                <MudText Typo="Typo.h5">@Program.Student.Name</MudText>
             </MudCardContent>
             <MudCardActions>
                 <InputFile id="fileInput" OnChange="UploadFiles" hidden multiple />
@@ -22,9 +23,9 @@
                 <MudText>Niên Khóa: 2018-2022</MudText>
             </MudItem>
             <MudItem xs="6" sm="6">
-                <MudText>Họ và tên: @student.Name</MudText>
-                <MudText>Quê quán: @student.Address</MudText>
-                <MudText>Số điện thoại: @student.PhoneNumber</MudText>
+                <MudText>Họ và tên: @Program.Student.Name</MudText>
+                <MudText>Quê quán: @Program.Student.Address</MudText>
+                <MudText>Số điện thoại: @Program.Student.PhoneNumber</MudText>
                 <MudText>Ngày sinh: 24.04.2000</MudText>
             </MudItem>
         </MudGrid>
@@ -32,33 +33,33 @@
         <MudDivider />
         <MudGrid>
             <MudItem xs="12" sm="6">
-                <MudSelect T="bool" Label="Giới tính" @bind-Value="@student.Sex">
+                <MudSelect T="bool" Label="Giới tính" @bind-Value="@Program.Student.Sex">
                     <MudSelectItem Value="@true" />
                     <MudSelectItem Value="@false" />
 
                 </MudSelect>
-                <MudTextField @bind-Value="@student.Email" Label="Email" Variant="Variant.Text"></MudTextField>
-                <MudTextField @bind-Value="@student.PhoneNumber" Label="Số điện thoại" Variant="Variant.Text"></MudTextField>
-                <MudTextField @bind-Value="@student.CMND" Label="CCCD" Variant="Variant.Text"></MudTextField>
+                <MudTextField @bind-Value="@Program.Student.Email" Label="Email" Variant="Variant.Text"></MudTextField>
+                <MudTextField @bind-Value="@Program.Student.PhoneNumber" Label="Số điện thoại" Variant="Variant.Text"></MudTextField>
+                <MudTextField @bind-Value="@Program.Student.CMND" Label="CCCD" Variant="Variant.Text"></MudTextField>
             </MudItem>
             <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="@student.Nationality" Label="Quốc tịch" Variant="Variant.Text"></MudTextField>
-                <MudTextField @bind-Value="@student.Folk" Label="Dân tộc" Variant="Variant.Text"></MudTextField>
-                <MudTextField @bind-Value="@student.Religion" Label="Tôn giáo" Variant="Variant.Text"></MudTextField>
+                <MudTextField @bind-Value="@Program.Student.Nationality" Label="Quốc tịch" Variant="Variant.Text"></MudTextField>
+                <MudTextField @bind-Value="@Program.Student.Folk" Label="Dân tộc" Variant="Variant.Text"></MudTextField>
+                <MudTextField @bind-Value="@Program.Student.Religion" Label="Tôn giáo" Variant="Variant.Text"></MudTextField>
 
                 <div class="d-flex">
                     <MudDatePicker Class="w-50" Label="Ngày cấp" @bind-Date="date" DisableToolbar="true" />
                     <span></span>
-                    <MudTextField @bind-Value="@student.PlaceOfIssue" Label="Nơi cấp" Variant="Variant.Text"></MudTextField>
+                    <MudTextField @bind-Value="@Program.Student.PlaceOfIssue" Label="Nơi cấp" Variant="Variant.Text"></MudTextField>
                 </div>
             </MudItem>
         </MudGrid>
         <MudDivider />
         <MudGrid>
-            
+
             <MudItem xs="12" sm="12">
-                
-                <MudTextField @bind-Value="@student.Address" Label="Địa chỉ" Variant="Variant.Text"></MudTextField>
+
+                <MudTextField @bind-Value="@Program.Student.Address" Label="Địa chỉ" Variant="Variant.Text"></MudTextField>
 
             </MudItem>
         </MudGrid>
@@ -66,10 +67,10 @@
         <MudDivider />
         <MudGrid>
             <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="@student.NameParent" Label="Họ tên cha/mẹ" Variant="Variant.Text"></MudTextField>
+                <MudTextField @bind-Value="@Program.Student.NameParent" Label="Họ tên cha/mẹ" Variant="Variant.Text"></MudTextField>
             </MudItem>
             <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="@student.PhoneNumberParent" Label="Số điện thoại cha/mẹ" Variant="Variant.Text"></MudTextField>
+                <MudTextField @bind-Value="@Program.Student.PhoneNumberParent" Label="Số điện thoại cha/mẹ" Variant="Variant.Text"></MudTextField>
             </MudItem>
         </MudGrid>
     </MudItem>
@@ -79,36 +80,66 @@
 
 @code {
     DateTime? date = DateTime.Today;
-    Student student = new Student();
-    List<Student> students = new List<Student>();
+    //Student student = new Student();
+    //List<Student> students = new List<Student>();
     //{
     //    Address = "Hà Tĩnh",
     //    Name = "Nguyễn Tuấn Anh",
     //    PhoneNumber = "0948502258",
     //    Email = "ntnanh.hutech@gmail.com"
     //};
+    List<(string,string,string)> _data = new List<(string, string, string)>();
     private async void OnValidSubmit()
     {
 
-        await API<Student>.Instance.PutAsync($"/api/Students/{student.Id}", student);
+        await API<Student>.Instance.PutAsync($"/api/Students/{Program.Student.Id}", Program.Student);
         Snackbar.Add("Lưu thành công");
     }
     protected async override Task OnInitializedAsync()
     {
-        Guid Id = new Guid("e37ea4e6-a000-4fb5-dbac-08d9ae862a65");
         await base.OnInitializedAsync();
         //listModel = await API<List<Schedule>>.QLTKB.GetAsync("/api/Su");
-        students = await API<List<Student>>.Instance.GetAsync("/api/Students");
-        student = students.Where(a => a.Id == Id).FirstOrDefault();
+        //students = await API<List<Student>>.Instance.GetAsync("/api/Students");
+        //student = students.Where(a => a.Id == Program.Student.Id).FirstOrDefault();
+        await DriveServices.PrepareFolderId(ConvertGuidToInt(Program.Student.Id.ToString()), UploadClassify.OrderData);
+        try
+        {
+            int id = ConvertGuidToInt(Program.Student.Id.ToString());
+            _data = await DriveServices.GetFilesMetadataAsync(new List<string>() { Program.Student.Image }, UploadClassify.OrderData, id);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
 
     }
-    IList<IBrowserFile> files = new List<IBrowserFile>();
-    private void UploadFiles(InputFileChangeEventArgs e)
+    List<IBrowserFile> files = new List<IBrowserFile>();
+    private async void UploadFiles(InputFileChangeEventArgs e)
     {
         foreach (var file in e.GetMultipleFiles())
         {
             files.Add(file);
-        }
+        } 
+        var x = await DriveServices.UploadRangeAsync(files, UploadClassify.OrderData, ConvertGuidToInt(Program.Student.Id.ToString()));
+        Program.Student.Image = x.FirstOrDefault();
+        await API<Student>.Instance.PutAsync($"/api/Students/{Program.Student.Id}", Program.Student);
+        _data = await DriveServices.GetFilesMetadataAsync(new List<string>() { Program.Student.Image }, UploadClassify.OrderData, ConvertGuidToInt(Program.Student.Id.ToString()));
+        StateHasChanged();
         //TODO upload the files to the server
+    }
+
+    int ConvertGuidToInt(string guidId)
+    {
+        string b = string.Empty;
+
+        for (int i = 0; i < guidId.Length; i++)
+        {
+            if (Char.IsDigit(guidId[i]))
+                b += guidId[i];
+        }
+        if (b.Length > 5)
+            b = b.Substring(0, 5);
+
+        return int.Parse(b);
     }
 }

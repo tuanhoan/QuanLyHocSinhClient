@@ -10,7 +10,7 @@ namespace QuanLyHocSinhClient.Models
     {
         public Homework()
         {
-            Comments = new HashSet<Comment>();
+            HomeworkSubmits = new HashSet<HomeworkSubmit>();
         }
         public int Id { get; set; }
         public string Title { get; set; }
@@ -18,6 +18,7 @@ namespace QuanLyHocSinhClient.Models
         public string Image { get; set; }
         public DateTime CreateAt { get; set; }
         public Guid TeacherId { get; set; }
-        public ICollection<Comment> Comments { get; set; }
+        public Teacher TeacherNavigation { get; set; }
+        public ICollection<HomeworkSubmit> HomeworkSubmits { get; set; }
     }
 }
