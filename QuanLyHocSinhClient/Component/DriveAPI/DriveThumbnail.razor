@@ -34,7 +34,7 @@
                 <div style="width:@($"{Width}%");" class="mr-2">
                     <MudPaper Elevation="2" Class="pa-1">
                         <div @onclick="@(()=> {
-                                             _imgSource = item.Link;
+                                             _imgSource = item.PlaceHolder;
                                              _isOverlayTrigger = true;
                                          })" style="width:100%;">
                             <img src="@item.PlaceHolder" style="width:100%;" alt="drivecontent" />
