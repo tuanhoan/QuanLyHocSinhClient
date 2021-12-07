@@ -17,12 +17,15 @@
         <MudTd DataLabel="SemesterId">@context.Name</MudTd>
         @for (int i = 0; i < testTypes.Count; i++)
         {
+
             int testTypeId = testTypes[i].Id;
             string dataLabel = testTypes[i].TestName;
-            <MudTd DataLabel="@dataLabel">@scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == testTypeId)?.Point</MudTd>
+            var diem = @scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == testTypeId) != null ? scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == testTypeId).Point : 0;
+    <MudTd DataLabel="@dataLabel">@diem</MudTd>
 
         }
-        
+    <MudTd DataLabel="Trung bình">@(AverageScore(context.Id))</MudTd>
+       
 
 
     </RowTemplate>
@@ -34,6 +37,8 @@
     List<Score> scores = new List<Score>();
     List<TestType> testTypes = new List<TestType>();
     List<Subject> subjects = new List<Subject>();
+    int index = 0;
+    double avg;
     protected async override Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -42,14 +47,17 @@
         subjects = await API<List<Subject>>.Instance.GetAsync("api/subjects");
         scores = await API<List<Score>>.Instance.GetAsync($"/api/Scores/ScoresByStudentAndSemester/{studentId}/{semesterId}");
     }
-    double AverageScore(int i, int j)
+    double AverageScore(int subjectId)
     {
-        double avrg=0;
-        foreach(var item in scores)
-        { 
-            if(item.TestTypeId== testTypes[i].Id && subjects[i].Id==item.SubjectId)
-            avrg += item.Point *item.TestTypeNavigation.ScoreFactor;
-        }
-        return avrg;
+        double avg = 0;
+
+        var mieng = scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 5) != null ? scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 5).Point : 0;
+        var d15p = scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 2) != null ? scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 2).Point : 0;
+        var d60p = scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 3) != null ? scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 3).Point : 0;
+        var hocki = scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 4) != null ? scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 4).Point : 0;
+        avg = Math.Round(((mieng + d15p + d60p * 2 + hocki * 3) / 7),2);
+        
+        return avg;
+
     }
 }

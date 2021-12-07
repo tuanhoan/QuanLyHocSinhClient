@@ -1,0 +1,130 @@
+﻿@page "/abc"
+@using QuanLyHocSinhClient.Models
+
+@inject ISnackbar Snackbar
+
+@if (testTypes.Count > 0 && scores.Count >= 0)
+{
+    <MudTable Items="@subjects" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" RowEditCommit="ItemHasBeenCommitted">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Periodic Scores</MudText>
+            <MudSpacer />
+            @*<MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>*@
+        </ToolBarContent>
+        <ColGroup>
+            <col style="width:100px;" />
+            <col style="width:100px;" />
+            <col style="width:100px;" />
+            <col style="width:100px;" />
+            <col style="width:50%" />
+            <col />
+            <col style="width:100px;" />
+        </ColGroup>
+        <HeaderContent>
+
+            <MudTh>Môn học</MudTh>
+            @foreach (var item in testTypes)
+                {
+                <MudTd>@item.TestName</MudTd>
+                }
+            <MudTh>Trung bình</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Môn học">@context.Name</MudTd>
+
+            @for (int i = 1; i < testTypes.Count; i++)
+                {
+                    int testTypeId = testTypes[i].Id;
+                    string dataLabel = testTypes[i].TestName;
+
+                <MudTd DataLabel="@dataLabel">@scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == testTypeId)?.Point</MudTd>
+
+                }
+            <MudTd DataLabel="Trung bình">@context.Name</MudTd>
+        </RowTemplate>
+        <RowEditingTemplate>
+            <MudTd DataLabel="Môn học">@context.Name</MudTd>
+
+            <MudTd DataLabel="15p"><MudTextField @bind-Value="@scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == 2).Point" Required /></MudTd>
+            <MudTd DataLabel="60p"><MudTextField @bind-Value="@scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == 3).Point" Required /></MudTd>
+            <MudTd DataLabel="Học kì "><MudTextField @bind-Value="@scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == 4).Point" Required /></MudTd>
+            <MudTd DataLabel="Miệng"><MudTextField @bind-Value="@scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == 5).Point" Required /></MudTd>
+            <MudTd DataLabel="Học kì">@context.Name</MudTd>
+        </RowEditingTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+}
+
+
+@code {
+    int semesterId = 1;
+    Guid studentId = new Guid("e37ea4e6-a000-4fb5-dbac-08d9ae862a65");
+    List<Subject> subjects = new List<Subject>();
+    List<Score> scores = new List<Score>();
+    List<TestType> testTypes = new List<TestType>();
+
+    Subject subject = new Subject();
+    Score score = new Score();
+    private List<string> editEvents = new();
+    private bool dense = false;
+    private bool hover = true;
+    private bool ronly = false;
+    private bool canCancelEdit = false;
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        testTypes = await API<List<TestType>>.Instance.GetAsync("api/testtypes");
+        subjects = await API<List<Subject>>.Instance.GetAsync("api/subjects");
+        scores = await API<List<Score>>.Instance.GetAsync($"/api/Scores/ScoresByStudentAndSemester/{Program.Student.Id}/{semesterId}");
+
+    }
+
+    private void ClearEventLog()
+    {
+        editEvents.Clear();
+    }
+
+    private void AddEditionEvent(string message)
+    {
+        editEvents.Add(message);
+        StateHasChanged();
+    }
+
+    //private void BackupItem(object Score)
+    //{
+    //    ScoreBeforeEdit = new()
+    //    {
+    //        StudentId = ((Score)Score).StudentId,
+    //        SubjectId = ((Score)Score).SubjectId,
+    //        TestTypeId = ((Score)Score).TestTypeId,
+    //        Point = ((Score)Score).Point
+    //    };
+    //    AddEditionEvent($"RowEditPreview event: made a backup of Score {((Score)Score).StudentId}");
+    //}
+
+    private async void ItemHasBeenCommitted(object Subject)
+    {
+        AddEditionEvent($"RowEditCommit event: Changes to Score {((Subject)Subject).Name} committed");
+        foreach (var item in scores)
+        {
+            item.SubjectNavigation = null;
+            item.SemesterNavigation = null;
+            item.TestTypeNavigation = null;
+
+        }
+        await API<List<Score>>.Instance.PutAsync("/api/Scores/UpdateScores", scores);
+    }
+
+    //private void ResetItemToOriginalValues(object Score)
+    //{
+    //    ((Score)Score).StudentId = ScoreBeforeEdit.StudentId;
+    //    ((Score)Score).SubjectId = ScoreBeforeEdit.SubjectId;
+    //    ((Score)Score).TestTypeId = ScoreBeforeEdit.TestTypeId;
+    //    ((Score)Score).Point = ScoreBeforeEdit.Point;
+    //    AddEditionEvent($"RowEditCancel event: Editing of Score {((Score)Score).SubjectId} cancelled");
+    //}
+
+}

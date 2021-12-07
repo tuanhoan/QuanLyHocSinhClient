@@ -1,81 +1,112 @@
 ﻿@page "/inputscores"
-<MudSelect T="string" Label="Chọn lớp" Variant="Variant.Filled">
+@inject ISnackbar Snackbar
+@using QuanLyHocSinhClient.Models
+<MudSelect ValueChanged="@((int e)=>LoadStudent(e))" T="int" Label="Chọn lớp" Variant="Variant.Filled">
     @foreach (var item in classes)
     {
-        <MudSelectItem Value="@item.Name"></MudSelectItem>
-        <MudSelect T="string" Label="Chọn học sinh" Variant="Variant.Filled">
-            @foreach (var item1 in students)
-            {
-                if (item.Id == item1.ClassId)
-                {
-                    <MudSelectItem Value="@item1.Name"></MudSelectItem>
-                }
+        <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
 
-            }
-        </MudSelect>
+
+    }
+
+</MudSelect>
+<MudSelect ValueChanged="@((Guid e)=>LoadScores(e))" T="Guid" Label="Chọn học sinh" Variant="Variant.Filled">
+    @foreach (var item in students)
+    {
+        <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
     }
 </MudSelect>
 
+<MudTable Items="@subjects"   OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" RowEditCommit="ItemHasBeenCommitted">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Diem</MudText>
+        <MudSpacer />
+        @*<MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>*@
+    </ToolBarContent>
+    <HeaderContent>
 
-<MudGrid Class="mt-5">
-
-    
-    <MudItem xs="12" sm="10">
-        @foreach (var item in subjects)
+        <MudTh>Môn học</MudTh>
+        @foreach (var item in testTypes)
         {
-
-            var diemMieng = scores.FirstOrDefault(x => x.SubjectId == item.Id && x.TestTypeId == 5)?.Point;
-            var diem15p = scores.FirstOrDefault(x => x.SubjectId == item.Id && x.TestTypeId == 2)?.Point;
-            var diem60p = scores.FirstOrDefault(x => x.SubjectId == item.Id && x.TestTypeId == 3)?.Point;
-            var diemHocki = scores.FirstOrDefault(x => x.SubjectId == item.Id && x.TestTypeId == 4)?.Point;
-            double diemTrungbinh = Math.Round(Convert.ToDouble((diemMieng + diem15p + diem60p * 2 + diemHocki * 3) / 7), 2);
-            <MudItem xs="12" sm="2">
-                <MudField Label="" Variant="Variant.Text">@item.Name</MudField>
-            </MudItem>
-            <MudItem xs="12" sm="2">
-                <MudTextField @bind-Value="@diemMieng" Label="Miệng" Variant="Variant.Text"></MudTextField>
-            </MudItem>
-            <MudItem xs="12" sm="2">
-                <MudTextField @bind-Value="@diem15p" Label="15p" Variant="Variant.Text"></MudTextField>
-            </MudItem>
-            <MudItem xs="12" sm="2">
-                <MudTextField @bind-Value="@diem60p" Label="60p" Variant="Variant.Text"></MudTextField>
-            </MudItem>
-            <MudItem xs="12" sm="2">
-                <MudTextField @bind-Value="@diemHocki" Label="Học kì" Variant="Variant.Text"></MudTextField>
-            </MudItem>
-            <MudItem xs="12" sm="2">
-                <MudTextField @bind-Value="@diemTrungbinh" Label="Trung bình" Variant="Variant.Text" Disabled="true"></MudTextField>
-            </MudItem>
+            <MudTd>@item.TestName</MudTd>
         }
-        </MudItem>
-        <MudItem xs="12" sm="2">
-         
-                    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small">Save</MudButton>
-            
-        </MudItem>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Môn học">@context.Name</MudTd>
 
+        @for (int i = 0; i < testTypes.Count; i++)
+        {
+            int testTypeId = testTypes[i].Id;
+            string dataLabel = testTypes[i].TestName;
 
+            <MudTd DataLabel="@dataLabel">@scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == testTypeId)?.Point</MudTd>
+
+        }
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd DataLabel="Môn học">@context.Name</MudTd>
+
+        <MudTd DataLabel="15p"><MudTextField @bind-Value="@scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == 2).Point" Required /></MudTd>
+        <MudTd DataLabel="60p"><MudTextField @bind-Value="@scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == 3).Point" Required /></MudTd>
+        <MudTd DataLabel="Học kì "><MudTextField @bind-Value="@scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == 4).Point" Required /></MudTd>
+        <MudTd DataLabel="Miệng"><MudTextField  @bind-Value="@scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == 5).Point" Required /></MudTd>
         
-    
-
-</MudGrid>
+    </RowEditingTemplate>
+</MudTable>
 
 @code {
 
     Student student = new Student();
+    Score score = new Score();
     List<Subject> subjects = new List<Subject>();
     List<Student> students = new List<Student>();
     List<Score> scores = new List<Score>();
     List<Class> classes = new List<Class>();
-
+    List<TestType> testTypes = new List<TestType>();
+    private List<string> editEvents = new();
+    double tmp = 0;
     protected async override Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         subjects = await API<List<Subject>>.Instance.GetAsync("/api/Subjects");
-        students = await API<List<Student>>.Instance.GetAsync("/api/Students");
-        classes = await API<List<Class>>.Instance.GetAsync("/api/Classs");
-        scores = await API<List<Score>>.Instance.GetAsync($"/api/Scores/ScoresByStudentAndSemester/{students[0].Id}/{1}");
 
+        classes = await API<List<Class>>.Instance.GetAsync("/api/Classs");
+        testTypes = await API<List<TestType>>.Instance.GetAsync("api/testtypes");
+
+
+    }
+    async void LoadStudent(int classId)
+    {
+        students = await API<List<Student>>.Instance.GetAsync($"/api/Students/studentByClassId/{classId}");
+
+    }
+    async void LoadScores(Guid studentId)
+    {
+        var sc = await API<List<Score>>.Instance.GetAsync($"api/Scores/InitScore/{studentId}/{1}");
+        scores = await API<List<Score>>.Instance.GetAsync($"/api/Scores/ScoresByStudentAndSemester/{studentId}/{1}");
+
+        StateHasChanged();
+    }
+    private void ClearEventLog()
+    {
+        editEvents.Clear();
+    }
+
+    private void AddEditionEvent(string message)
+    {
+        editEvents.Add(message);
+        StateHasChanged();
+    }
+    private async void ItemHasBeenCommitted(object Subject)
+    {
+        AddEditionEvent($"RowEditCommit event: Changes to Score {((Subject)Subject).Name} committed");
+        foreach (var item in scores)
+        {
+            item.SubjectNavigation = null;
+            item.SemesterNavigation = null;
+            item.TestTypeNavigation = null;
+
+        }
+        await API<List<Score>>.Instance.PutAsync("/api/Scores/UpdateScores", scores);
     }
 }
