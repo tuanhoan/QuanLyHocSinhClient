@@ -1,0 +1,81 @@
+﻿@page "/homework/{Id:int}"
+@inject GoogleDriveServices GoogleDriveServices
+@using System.Globalization
+
+<div class="container">
+    @if (_homework == null)
+    {
+        <p>Loading</p>
+    }
+    else
+    {
+        <h3>@_homework.Title</h3>
+        <MudCardMedia Image="@_homework.Image"></MudCardMedia>
+        <p>@_homework.Content</p>
+        <h2>Comment</h2>
+
+        <div class="mt-8 grey lighten-4" id="paste-block">
+            <MudTextField T="string" Label="Bình luận" Variant="Variant.Text" @bind-Value="homeworkSubmit.Content" Lines="5" />
+            <MudGrid>
+                <MudItem xs="10">
+                    <DriveUpload Id="@_homework.Id" @ref="_driveUpload" Classify="UploadClassify.CustomerData"></DriveUpload>
+                </MudItem>
+                <MudItem xs="2" Class="d-flex flex-row-reverse">
+                    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="HandleSubmit">Gửi</MudButton>
+                </MudItem>
+            </MudGrid>
+        </div>
+        @foreach (var item in homeworkSubmits)
+        {
+            <CMTItem Data="item"></CMTItem>
+        }
+
+        <br/>
+        <br/>
+        <br/>
+    }
+</div>
+
+
+
+@code{
+    [Parameter] public  int Id { get; set; }
+    //[Parameter] public NewsFeed NewsFeed { get; set; } 
+    Homework _homework = new Homework();
+    HomeworkSubmit homeworkSubmit = new HomeworkSubmit();
+    List<HomeworkSubmit> homeworkSubmits = new List<HomeworkSubmit>();
+
+
+    DriveUpload _driveUpload;
+    bool EditorEnabled = true;
+
+    List<string> _listSource = new();
+
+    public async Task HandleSubmit()
+    {
+        if (_driveUpload.IsUpload)
+        {
+            await _driveUpload.UploadAsync();
+            if (_driveUpload.IsUploadComplete) // check upload error: true when upload success; false when upload failed
+            {
+                foreach (var item in _driveUpload.ResultPath)
+                {
+                    this.homeworkSubmit.ImgSources = item + "|";
+                }
+            }
+            else
+                return;
+        }
+        this.homeworkSubmit.HomeworkId = _homework.Id;
+        this.homeworkSubmit.StudentId = Program.Student.Id;
+
+        await API<HomeworkSubmit>.Instance.PostAsync("/api/HomeworkSubmit", homeworkSubmit);
+        homeworkSubmit = new HomeworkSubmit();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        _homework = await API<Homework>.Instance.GetAsync($"/api/Homework/{Id}");
+        await GoogleDriveServices.PrepareFolderId(_homework.Id, UploadClassify.CustomerData);
+        homeworkSubmits = await API<List<HomeworkSubmit>>.Instance.GetAsync($"/api/HomeworkSubmit/ByHomeworkId/{Id}");
+    }
+}

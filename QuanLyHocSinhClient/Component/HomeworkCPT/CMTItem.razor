@@ -8,15 +8,14 @@
 
         @if (_listImage.Count > 0)
         {
-            <DriveThumbnail Classify="UploadClassify.CustomerData" Id="Data.NewsFeedId" ListPath="@_listImage"></DriveThumbnail>
+            <DriveThumbnail Classify="UploadClassify.DocumentData" Id="Data.HomeworkId" ListPath="@_listImage"></DriveThumbnail>
         }
 
     </div>
     <MudDivider />
 </div>
-
 @code {
-    [Parameter] public Comment Data { get; set; }
+    [Parameter] public HomeworkSubmit Data { get; set; }
     List<string> _listImage = new List<string>();
     protected override void OnInitialized()
     {

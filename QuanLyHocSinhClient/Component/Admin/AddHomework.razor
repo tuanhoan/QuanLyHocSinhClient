@@ -1,11 +1,15 @@
-﻿@page "/addHomework"
-<h3>AddHomework</h3>
+﻿
+@page "/addHomework"
+@inject ISnackbar Snackbar
+@if (Program.Teacher != null)
+{
+    <h3>AddHomework</h3>
 
     <MudGrid Class="mt-4">
         <MudTextField Label="Tiêu đề" @bind-Value="@homework.Title" Variant="Variant.Text"></MudTextField>
     </MudGrid>
     <MudGrid Class="mt-4">
-        <MudTextField Label="Nội dung" @bind-Value="@homework.Content" Variant="Variant.Text"></MudTextField>
+        <MudTextField T="string" Label="Nội dung" Variant="Variant.Text" @bind-Value="homework.Content" Lines="5" />
     </MudGrid>
     <MudGrid Class="mt-4">
         <MudCard Style="width:100%">
@@ -15,15 +19,21 @@
             </MudCardActions>
             <MudCardMedia Image="@homework.Image"></MudCardMedia>
         </MudCard>
-        
+
     </MudGrid>
     <MudGrid Class="mt-4">
-        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small">Save</MudButton>
-    </MudGrid>
+        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small" OnClick="@OnValidSubmit">Save</MudButton>
+    </MudGrid>  }
+            else
+            {
+                <p>Không có quyền truy cập!</p>
+            }
+
 
 
 @code {
     Homework homework = new Homework();
+    Teacher teacher = new Teacher();
     IList<IBrowserFile> files = new List<IBrowserFile>();
     private void UploadFiles(InputFileChangeEventArgs e)
     {
@@ -32,5 +42,19 @@
             files.Add(file);
         }
         //TODO upload the files to the server
+    }
+    protected async override Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        teacher = Program.Teacher;
+
+
+    }
+    private async void OnValidSubmit()
+    {
+        homework.TeacherId = teacher.Id;
+        homework.CreateAt = DateTime.Now;
+        await API<Homework>.Instance.PostAsync("/api/Homework", homework);
+        Snackbar.Add("Lưu thành công");
     }
 }

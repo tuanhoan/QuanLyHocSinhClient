@@ -1,5 +1,9 @@
-﻿@page "/timetable"
+﻿
+    @page "/timetable"
+
+
 @using System.Globalization
+<MudButton OnClick="NextWeek">Week</MudButton>
 <MudGrid Class="mt-2">
     <MudItem>
         <MudText Typo="Typo.h4"><b>Thời khóa biểu</b></MudText>
@@ -13,8 +17,6 @@
     int index = i;
     <Timetable title="@ConvertDateToString(monday.AddDays(index))" scheduleDetails="@getScheduleDetailByDay(monday.AddDays(index))"></Timetable>
 }
-@*<Timetable title="@(title.DayOfWeek +", Ngay"+ title.ToString("dd/MM/yyyy"))" scheduleDetails="@scheduleDetails"></Timetable>
-<Timetable title="Thứ 3, Ngày 15/11/2021" scheduleDetails="@scheduleDetails"></Timetable>*@
 @*@foreach(var item in scheduleDetails)
     {
         <p>@item.SubjectId</p>
@@ -41,9 +43,14 @@
         title = DateTime.ParseExact(param, "ddMMyyyy", CultureInfo.InvariantCulture);
         return title.DayOfWeek + ", Ngay" + title.ToString("dd/MM/yyyy");
     }
-      List<ScheduleDetail> getScheduleDetailByDay(DateTime dateTime)
-        {
-            var param = dateTime.ToString("ddMMyyyy");
-            return  API<List<ScheduleDetail>>.Instance.GetAsync($"/api/ScheduleDetails/scheduleDetailByDate/{param}").Result;
-        }
+    List<ScheduleDetail> getScheduleDetailByDay(DateTime dateTime)
+    {
+        var param = dateTime.ToString("ddMMyyyy");
+        return API<List<ScheduleDetail>>.Instance.GetAsync($"/api/ScheduleDetails/scheduleDetailByDate/{param}").Result;
+    }
+    void NextWeek()
+    {
+        monday = monday.AddDays(-7);
+        
+    }
 }

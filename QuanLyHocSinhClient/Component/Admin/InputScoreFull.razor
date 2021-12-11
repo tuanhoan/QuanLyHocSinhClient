@@ -1,0 +1,115 @@
+﻿@page "/inputscores"
+@inject ISnackbar Snackbar
+@using QuanLyHocSinhClient.Models
+@if (Program.Teacher != null)
+{
+    <MudSelect ValueChanged="@((int e)=>LoadStudent(e))" T="int" Label="Chọn lớp" Variant="Variant.Filled">
+        @foreach (var item in classes)
+        {
+            <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+
+
+        }
+
+    </MudSelect>
+    <MudSelect ValueChanged="@((Guid e)=>LoadScores(e))" T="Guid" Label="Chọn học sinh" Variant="Variant.Filled">
+        @foreach (var item in students)
+        {
+            <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+        }
+    </MudSelect>
+
+    <MudTable Items="@subjects" OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" RowEditCommit="ItemHasBeenCommitted">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Điểm</MudText>
+            <MudSpacer />
+        </ToolBarContent>
+        <HeaderContent>
+
+            <MudTh>Môn học</MudTh>
+            @foreach (var item in testTypes)
+                {
+                <MudTd>@item.TestName</MudTd>
+                }
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Môn học">@context.Name</MudTd>
+
+            @for (int i = 0; i < testTypes.Count; i++)
+                {
+                    int testTypeId = testTypes[i].Id;
+                    string dataLabel = testTypes[i].TestName;
+                <MudTd DataLabel="@dataLabel">@scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == testTypeId)?.Point</MudTd>
+
+                }
+        </RowTemplate>
+        <RowEditingTemplate>
+            <MudTd DataLabel="Môn học">@context.Name</MudTd>
+            <MudTd DataLabel="15p"><MudTextField @bind-Value="@scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == 2).Point" Required /></MudTd>
+            <MudTd DataLabel="60p"><MudTextField @bind-Value="@scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == 3).Point" Required /></MudTd>
+            <MudTd DataLabel="Học kì "><MudTextField @bind-Value="@scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == 4).Point" Required /></MudTd>
+            <MudTd DataLabel="Miệng"><MudTextField @bind-Value="@scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == 5).Point" Required /></MudTd>
+
+        </RowEditingTemplate>
+    </MudTable>
+}else{
+    <p>Không thể truy cập!</p>
+}
+
+
+@code {
+
+    Student student = new Student();
+    Score score = new Score();
+    List<Subject> subjects = new List<Subject>();
+    List<Student> students = new List<Student>();
+    List<Score> scores = new List<Score>();
+    List<Class> classes = new List<Class>();
+    List<TestType> testTypes = new List<TestType>();
+    private List<string> editEvents = new();
+    double tmp = 0;
+    protected async override Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        subjects = await API<List<Subject>>.Instance.GetAsync("/api/Subjects");
+
+        classes = await API<List<Class>>.Instance.GetAsync("/api/Classs");
+        testTypes = await API<List<TestType>>.Instance.GetAsync("api/testtypes");
+
+
+    }
+    async void LoadStudent(int classId)
+    {
+        students = await API<List<Student>>.Instance.GetAsync($"/api/Students/studentByClassId/{classId}");
+
+    }
+    async void LoadScores(Guid studentId)
+    {
+        var sc = await API<List<Score>>.Instance.GetAsync($"api/Scores/InitScore/{studentId}/{1}");
+        scores = await API<List<Score>>.Instance.GetAsync($"/api/Scores/ScoresByStudentAndSemester/{studentId}/{1}");
+
+        StateHasChanged();
+    }
+    private void ClearEventLog()
+    {
+        editEvents.Clear();
+    }
+
+    private void AddEditionEvent(string message)
+    {
+        editEvents.Add(message);
+        StateHasChanged();
+    }
+    private async void ItemHasBeenCommitted(object Subject)
+    {
+        AddEditionEvent($"RowEditCommit event: Changes to Score {((Subject)Subject).Name} committed");
+        foreach (var item in scores)
+        {
+            item.SubjectNavigation = null;
+            item.SemesterNavigation = null;
+            item.TestTypeNavigation = null;
+
+        }
+        await API<List<Score>>.Instance.PutAsync("/api/Scores/UpdateScores", scores);
+    }
+}

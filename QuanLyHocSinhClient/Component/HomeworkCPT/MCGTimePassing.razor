@@ -1,0 +1,46 @@
+﻿@if (CountTime(TimeValue).TotalHours <= 1)
+{
+    <div class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Timer" Size="Size.Small" Color="Color.Dark" />
+        <MudText Typo="Typo.caption" class="mud-text-disabled small">
+            @Convert.ToInt32(CountTime(TimeValue).TotalMinutes).ToString() phút trước
+        </MudText>
+    </div>
+}
+else if (CountTime(TimeValue).TotalHours <= 24)
+{
+    <div class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Timer" Size="Size.Small" Color="Color.Dark" />
+        <MudText Typo="Typo.caption" class="mud-text-disabled small">
+            @Convert.ToInt32(CountTime(TimeValue).TotalHours).ToString() giờ trước
+        </MudText>
+    </div>
+}
+else if (CountTime(TimeValue).TotalHours <= 72)
+{
+    <div class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Timer" Size="Size.Small" Color="Color.Dark" />
+        <MudText Typo="Typo.caption" class="mud-text-disabled small">
+            @Convert.ToInt32(CountTime(TimeValue).TotalDays).ToString() ngày trước, lúc @TimeValue.ToShortTimeString()
+        </MudText>
+    </div>
+}
+else
+{
+    <div class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Timer" Size="Size.Small" Color="Color.Dark" />
+        <MudText Typo="Typo.caption" class="mud-text-disabled small">
+            @TimeValue.ToString("dd/MM/yyyy HH:mm")
+        </MudText>
+    </div>
+}
+@code{
+    [Parameter] public DateTime TimeValue { get; set; }
+    
+    DateTime custDateTime = DateTime.Now.AddHours(-7);
+    TimeSpan CountTime(DateTime dateTime)
+    { 
+        TimeSpan timeSpan = custDateTime - dateTime;
+        return timeSpan;
+    }
+}

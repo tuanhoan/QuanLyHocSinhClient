@@ -2,15 +2,22 @@
     <MudNavLink Href="/">Trang chủ</MudNavLink>
     <MudNavLink Href="/information">Thông tin cá nhân</MudNavLink>
     <MudNavGroup Title="Học tập" Expanded="true">
-        <MudNavLink Href="/timetable">Thời khóa biểu</MudNavLink>
-        <MudNavLink Href="/score">Điểm</MudNavLink>
+        @if (Program.Teacher == null)
+        {<MudNavLink Href="/timetable">Thời khóa biểu</MudNavLink>
+         <MudNavLink Href="/score">Điểm</MudNavLink>
+        }
+
         <MudNavLink Href="/homework">Bài tập</MudNavLink>
     </MudNavGroup>
-    <MudNavGroup Title="Admin" Expanded="true">
-        <MudNavLink Href="/addHomework">Thêm bài tập</MudNavLink>
-        <MudNavLink Href="/inputscores">Nhập điểm</MudNavLink>
-        <MudNavLink Href="/addNewsfeed">Thêm thông báo</MudNavLink>
-        <MudNavLink Href="/inputStudent">Thêm học sinh</MudNavLink>
-    </MudNavGroup>
+    @if (Program.Teacher != null)
+    {
+        <MudNavGroup Title="Admin" Expanded="true" >
+            <MudNavLink Href="/addHomework">Thêm bài tập</MudNavLink>
+            <MudNavLink Href="/inputscores">Nhập điểm</MudNavLink>
+            <MudNavLink Href="/addNewsfeed">Thêm thông báo</MudNavLink>
+            <MudNavLink Href="/importStudent">Thêm học sinh</MudNavLink>
+        </MudNavGroup>
+    }
+
 
 </MudNavMenu>

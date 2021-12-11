@@ -1,0 +1,26 @@
+﻿@page "/homework"
+<h3>List</h3>
+@if (homeworks == null)
+{
+    <p>Loading</p>
+}
+else
+{
+    foreach (var item in homeworks)
+    {
+
+        <ItemHomework Data="item" ></ItemHomework>
+        
+    }
+}
+
+
+@code {
+    List<Homework> homeworks = new List<Homework>();
+    protected override async Task OnInitializedAsync()
+    {
+        homeworks = await API<List<Homework>>.Instance.GetAsync("api/Homework");
+        StateHasChanged();
+    }
+
+}

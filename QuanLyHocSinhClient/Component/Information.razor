@@ -1,129 +1,234 @@
 ﻿@page "/information"
 @inject ISnackbar Snackbar
 @inject GoogleDriveServices DriveServices
-<MudGrid Class="mt-10">
-    <MudItem xs="6" sm="3">
-        <MudCard>
-            <MudCardMedia Image="@_data.FirstOrDefault().Item2" Height="250" />
-            <MudCardContent>
-                <MudText Typo="Typo.h5">@Program.Student.Name</MudText>
-            </MudCardContent>
-            <MudCardActions>
-                <InputFile id="fileInput" OnChange="UploadFiles" hidden multiple />
-                <MudButton HtmlTag="label" Variant="Variant.Text" Color="Color.Primary" for="fileInput">Thay đổi ảnh</MudButton>
-            </MudCardActions>
-        </MudCard>
-    </MudItem>
-    <MudItem xs="6" sm="9">
-        <MudGrid>
-            <MudItem xs="6" sm="6">
-                <MudText>Mã số sinh viên: 1811060024</MudText>
-                <MudText>Lớp: 18DTHC2</MudText>
-                <MudText>Chuyên ngành: Công nghệ thông tin</MudText>
-                <MudText>Niên Khóa: 2018-2022</MudText>
-            </MudItem>
-            <MudItem xs="6" sm="6">
-                <MudText>Họ và tên: @Program.Student.Name</MudText>
-                <MudText>Quê quán: @Program.Student.Address</MudText>
-                <MudText>Số điện thoại: @Program.Student.PhoneNumber</MudText>
-                <MudText>Ngày sinh: 24.04.2000</MudText>
-            </MudItem>
-        </MudGrid>
-        <MudText Align="Align.Left" Class="mt-10"><b>Thông tin sinh viên.</b></MudText>
-        <MudDivider />
-        <MudGrid>
-            <MudItem xs="12" sm="6">
-                <MudSelect T="bool" Label="Giới tính" @bind-Value="@Program.Student.Sex">
-                    <MudSelectItem Value="@true" />
-                    <MudSelectItem Value="@false" />
+@inject IDialogService DialogService
+@if (Program.Student != null)
+{
+    <MudGrid Class="mt-10">
+        <MudItem xs="6" sm="3">
+            <MudCard>
+                <MudCardMedia Image="@_data.FirstOrDefault().Item2" Height="250" />
+                <MudCardContent>
+                    <MudText Typo="Typo.h5">@Program.Student.Name</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <InputFile id="fileInput" OnChange="UploadFiles" hidden />
+                    <MudButton HtmlTag="label" Variant="Variant.Text" Color="Color.Primary" for="fileInput">Thay đổi ảnh</MudButton>
+                </MudCardActions>
+            </MudCard>
+            <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+                Đổi mật khẩu
+            </MudButton>
+        </MudItem>
+        <MudItem xs="6" sm="9">
+            <MudGrid>
+                <MudItem xs="6" sm="6">
+                    <MudText>Họ và tên: @Program.Student.Name</MudText>
+                    <MudText>Lớp: @Program.Student.ClassId</MudText>
+                    <MudText>Niên Khóa: 2018-2022</MudText>
+                </MudItem>
+                <MudItem xs="6" sm="6">
 
-                </MudSelect>
-                <MudTextField @bind-Value="@Program.Student.Email" Label="Email" Variant="Variant.Text"></MudTextField>
-                <MudTextField @bind-Value="@Program.Student.PhoneNumber" Label="Số điện thoại" Variant="Variant.Text"></MudTextField>
-                <MudTextField @bind-Value="@Program.Student.CMND" Label="CCCD" Variant="Variant.Text"></MudTextField>
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="@Program.Student.Nationality" Label="Quốc tịch" Variant="Variant.Text"></MudTextField>
-                <MudTextField @bind-Value="@Program.Student.Folk" Label="Dân tộc" Variant="Variant.Text"></MudTextField>
-                <MudTextField @bind-Value="@Program.Student.Religion" Label="Tôn giáo" Variant="Variant.Text"></MudTextField>
+                    <MudText>Quê quán: @Program.Student.Address</MudText>
+                    <MudText>Số điện thoại: @Program.Student.PhoneNumber</MudText>
+                    <MudText>Ngày sinh: @Program.Student.BirthDay</MudText>
+                </MudItem>
+            </MudGrid>
+            <MudText Align="Align.Left" Class="mt-10"><b>Thông tin sinh viên.</b></MudText>
+            <MudDivider />
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="bool" Label="Giới tính" @bind-Value="@Program.Student.Sex">
+                        <MudSelectItem Value="@true" />
+                        <MudSelectItem Value="@false" />
 
-                <div class="d-flex">
-                    <MudDatePicker Class="w-50" Label="Ngày cấp" @bind-Date="date" DisableToolbar="true" />
-                    <span></span>
-                    <MudTextField @bind-Value="@Program.Student.PlaceOfIssue" Label="Nơi cấp" Variant="Variant.Text"></MudTextField>
-                </div>
-            </MudItem>
-        </MudGrid>
-        <MudDivider />
-        <MudGrid>
+                    </MudSelect>
+                    <MudTextField @bind-Value="@Program.Student.Email" Label="Email" Variant="Variant.Text"></MudTextField>
+                    <MudTextField @bind-Value="@Program.Student.PhoneNumber" Label="Số điện thoại" Variant="Variant.Text"></MudTextField>
+                    <MudTextField @bind-Value="@Program.Student.CMND" Label="CCCD" Variant="Variant.Text"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="@Program.Student.Nationality" Label="Quốc tịch" Variant="Variant.Text"></MudTextField>
+                    <MudTextField @bind-Value="@Program.Student.Folk" Label="Dân tộc" Variant="Variant.Text"></MudTextField>
+                    <MudTextField @bind-Value="@Program.Student.Religion" Label="Tôn giáo" Variant="Variant.Text"></MudTextField>
 
-            <MudItem xs="12" sm="12">
+                    <div class="d-flex">
+                        <MudDatePicker Class="w-50" Label="Ngày cấp" @bind-Date="@Program.Student.DateOfIssue" DisableToolbar="true" />
+                        <span></span>
+                        <MudTextField @bind-Value="@Program.Student.PlaceOfIssue" Label="Nơi cấp" Variant="Variant.Text"></MudTextField>
+                    </div>
+                </MudItem>
+            </MudGrid>
+            <MudDivider />
+            <MudGrid>
 
-                <MudTextField @bind-Value="@Program.Student.Address" Label="Địa chỉ" Variant="Variant.Text"></MudTextField>
+                <MudItem xs="12" sm="12">
 
-            </MudItem>
-        </MudGrid>
-        <MudText Align="Align.Left" Class="mt-10"><b>Thông tin nhân thân.</b></MudText>
-        <MudDivider />
-        <MudGrid>
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="@Program.Student.NameParent" Label="Họ tên cha/mẹ" Variant="Variant.Text"></MudTextField>
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="@Program.Student.PhoneNumberParent" Label="Số điện thoại cha/mẹ" Variant="Variant.Text"></MudTextField>
-            </MudItem>
-        </MudGrid>
-    </MudItem>
-</MudGrid>
+                    <MudTextField @bind-Value="@Program.Student.Address" Label="Địa chỉ" Variant="Variant.Text"></MudTextField>
+
+                </MudItem>
+            </MudGrid>
+            <MudText Align="Align.Left" Class="mt-10"><b>Thông tin nhân thân.</b></MudText>
+            <MudDivider />
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="@Program.Student.NameParent" Label="Họ tên cha/mẹ" Variant="Variant.Text"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="@Program.Student.PhoneNumberParent" Label="Số điện thoại cha/mẹ" Variant="Variant.Text"></MudTextField>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+    </MudGrid>
+}
+else
+{
+    <MudGrid Class="mt-10">
+        <MudItem xs="6" sm="3">
+            <MudCard>
+                <MudCardMedia Image="@_data.FirstOrDefault().Item2" Height="250" />
+                <MudCardContent>
+                    <MudText Typo="Typo.h5">@Program.Teacher.Name</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <InputFile id="fileInput" OnChange="UploadFiles" hidden multiple />
+                    <MudButton HtmlTag="label" Variant="Variant.Text" Color="Color.Primary" for="fileInput">Thay đổi ảnh</MudButton>
+                </MudCardActions>
+            </MudCard>
+            <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+                Đổi mật khẩu
+            </MudButton>
+        </MudItem>
+        <MudItem xs="6" sm="9">
+            <MudGrid>
+                <MudItem xs="6" sm="6">
+                    <MudText>Họ và tên: @Program.Teacher.Name</MudText>
+                    <MudText>Ngày sinh: @Program.Teacher.BirthDay</MudText>
+                    
+                </MudItem>
+                <MudItem xs="6" sm="6">
+
+                    <MudText>Quê quán: @Program.Teacher.Address</MudText>
+                    <MudText>Số điện thoại: @Program.Teacher.PhoneNumber</MudText>
+                    
+                </MudItem>
+            </MudGrid>
+            <MudText Align="Align.Left" Class="mt-10"><b>Thông tin sinh viên.</b></MudText>
+            <MudDivider />
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="bool" Label="Giới tính" @bind-Value="@Program.Teacher.Sex">
+                        <MudSelectItem Value="@true" />
+                        <MudSelectItem Value="@false" />
+
+                    </MudSelect>
+                    <MudTextField @bind-Value="@Program.Teacher.Email" Label="Email" Variant="Variant.Text"></MudTextField>
+                    <MudTextField @bind-Value="@Program.Teacher.PhoneNumber" Label="Số điện thoại" Variant="Variant.Text"></MudTextField>
+                    <MudTextField @bind-Value="@Program.Teacher.CMND" Label="CCCD" Variant="Variant.Text"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="@Program.Teacher.Nationality" Label="Quốc tịch" Variant="Variant.Text"></MudTextField>
+                    <MudTextField @bind-Value="@Program.Teacher.Folk" Label="Dân tộc" Variant="Variant.Text"></MudTextField>
+                    <MudTextField @bind-Value="@Program.Teacher.Religion" Label="Tôn giáo" Variant="Variant.Text"></MudTextField>
+
+                    <div class="d-flex">
+                        <MudDatePicker Class="w-50" Label="Ngày cấp" @bind-Date="@Program.Teacher.DateOfIssue" DisableToolbar="true" />
+                        <span></span>
+                        <MudTextField @bind-Value="@Program.Teacher.PlaceOfIssue" Label="Nơi cấp" Variant="Variant.Text"></MudTextField>
+                    </div>
+                </MudItem>
+            </MudGrid>
+            <MudDivider />
+            <MudGrid>
+
+                <MudItem xs="12" sm="12">
+
+                    <MudTextField @bind-Value="@Program.Teacher.Address" Label="Địa chỉ" Variant="Variant.Text"></MudTextField>
+
+                </MudItem>
+            </MudGrid>
+            
+        </MudItem>
+    </MudGrid>
+}
 
 <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small" OnClick="@OnValidSubmit">Save</MudButton>
 
 @code {
     DateTime? date = DateTime.Today;
-    //Student student = new Student();
-    //List<Student> students = new List<Student>();
-    //{
-    //    Address = "Hà Tĩnh",
-    //    Name = "Nguyễn Tuấn Anh",
-    //    PhoneNumber = "0948502258",
-    //    Email = "ntnanh.hutech@gmail.com"
-    //};
-    List<(string,string,string)> _data = new List<(string, string, string)>();
+    List<(string, string, string)> _data = new List<(string, string, string)>();
     private async void OnValidSubmit()
     {
+        if (Program.Student != null)
+        {
+            await API<Student>.Instance.PutAsync($"/api/Students/{Program.Student.Id}", Program.Student);
+        }
+        else
+        {
+            await API<Teacher>.Instance.PutAsync($"/api/Teachers/{Program.Teacher.Id}", Program.Teacher);
+        }
 
-        await API<Student>.Instance.PutAsync($"/api/Students/{Program.Student.Id}", Program.Student);
         Snackbar.Add("Lưu thành công");
     }
     protected async override Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        //listModel = await API<List<Schedule>>.QLTKB.GetAsync("/api/Su");
-        //students = await API<List<Student>>.Instance.GetAsync("/api/Students");
-        //student = students.Where(a => a.Id == Program.Student.Id).FirstOrDefault();
-        await DriveServices.PrepareFolderId(ConvertGuidToInt(Program.Student.Id.ToString()), UploadClassify.OrderData);
-        try
+        if (Program.Student != null)
         {
-            int id = ConvertGuidToInt(Program.Student.Id.ToString());
-            _data = await DriveServices.GetFilesMetadataAsync(new List<string>() { Program.Student.Image }, UploadClassify.OrderData, id);
+            await DriveServices.PrepareFolderId(ConvertGuidToInt(Program.Student.Id.ToString()), UploadClassify.OrderData);
+            try
+            {
+                int id = ConvertGuidToInt(Program.Student.Id.ToString());
+                _data = await DriveServices.GetFilesMetadataAsync(new List<string>() { Program.Student.Image }, UploadClassify.OrderData, id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+
+
+            }
         }
-        catch (Exception e)
+        else
         {
-            Console.WriteLine(e);
+            await DriveServices.PrepareFolderId(ConvertGuidToInt(Program.Teacher.Id.ToString()), UploadClassify.OrderData);
+            try
+            {
+                int id = ConvertGuidToInt(Program.Teacher.Id.ToString());
+                _data = await DriveServices.GetFilesMetadataAsync(new List<string>() { Program.Teacher.Image }, UploadClassify.OrderData, id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+
+
+            }
         }
+
 
     }
     List<IBrowserFile> files = new List<IBrowserFile>();
     private async void UploadFiles(InputFileChangeEventArgs e)
     {
+
         foreach (var file in e.GetMultipleFiles())
         {
             files.Add(file);
-        } 
-        var x = await DriveServices.UploadRangeAsync(files, UploadClassify.OrderData, ConvertGuidToInt(Program.Student.Id.ToString()));
-        Program.Student.Image = x.FirstOrDefault();
-        await API<Student>.Instance.PutAsync($"/api/Students/{Program.Student.Id}", Program.Student);
-        _data = await DriveServices.GetFilesMetadataAsync(new List<string>() { Program.Student.Image }, UploadClassify.OrderData, ConvertGuidToInt(Program.Student.Id.ToString()));
+        }
+        if (Program.Student != null)
+        {
+            var x = await DriveServices.UploadRangeAsync(files, UploadClassify.OrderData, ConvertGuidToInt(Program.Student.Id.ToString()));
+            Program.Student.Image = x.FirstOrDefault();
+            await API<Student>.Instance.PutAsync($"/api/Students/{Program.Student.Id}", Program.Student);
+            _data = await DriveServices.GetFilesMetadataAsync(new List<string>() { Program.Student.Image }, UploadClassify.OrderData, ConvertGuidToInt(Program.Student.Id.ToString()));
+        }
+        else
+        {
+            var x = await DriveServices.UploadRangeAsync(files, UploadClassify.OrderData, ConvertGuidToInt(Program.Teacher.Id.ToString()));
+            Program.Teacher.Image = x.FirstOrDefault();
+            await API<Teacher>.Instance.PutAsync($"/api/Teachers/{Program.Teacher.Id}", Program.Teacher);
+            _data = await DriveServices.GetFilesMetadataAsync(new List<string>() { Program.Teacher.Image }, UploadClassify.OrderData, ConvertGuidToInt(Program.Teacher.Id.ToString()));
+        }
+
         StateHasChanged();
         //TODO upload the files to the server
     }
@@ -141,5 +246,9 @@
             b = b.Substring(0, 5);
 
         return int.Parse(b);
+    }
+    private void OpenDialog()
+    {
+        DialogService.Show<ChangePassword>("Đổi mật khẩu");
     }
 }

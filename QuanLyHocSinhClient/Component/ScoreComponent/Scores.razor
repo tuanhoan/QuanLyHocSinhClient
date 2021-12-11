@@ -6,7 +6,7 @@
         <MudSpacer />
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>Subject</MudTh>
+        <MudTh>Môn học</MudTh>
         @foreach (var item in testTypes)
         {
             <MudTd>@item.TestName</MudTd>
@@ -24,10 +24,7 @@
     <MudTd DataLabel="@dataLabel">@diem</MudTd>
 
         }
-    <MudTd DataLabel="Trung bình">@(AverageScore(context.Id))</MudTd>
-       
-
-
+    <MudTd DataLabel="Trung bình">@AverageScore(context.Id)</MudTd>
     </RowTemplate>
 </MudTable>
 
@@ -38,25 +35,25 @@
     List<TestType> testTypes = new List<TestType>();
     List<Subject> subjects = new List<Subject>();
     int index = 0;
-    double avg;
+    double avg = 0;
     protected async override Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
         testTypes = await API<List<TestType>>.Instance.GetAsync("api/testtypes");
         subjects = await API<List<Subject>>.Instance.GetAsync("api/subjects");
-        scores = await API<List<Score>>.Instance.GetAsync($"/api/Scores/ScoresByStudentAndSemester/{studentId}/{semesterId}");
+        scores = await API<List<Score>>.Instance.GetAsync($"/api/Scores/ScoresByStudentAndSemester/{Program.Student.Id}/{semesterId}");
     }
     double AverageScore(int subjectId)
     {
-        double avg = 0;
+
 
         var mieng = scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 5) != null ? scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 5).Point : 0;
         var d15p = scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 2) != null ? scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 2).Point : 0;
         var d60p = scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 3) != null ? scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 3).Point : 0;
         var hocki = scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 4) != null ? scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 4).Point : 0;
         avg = Math.Round(((mieng + d15p + d60p * 2 + hocki * 3) / 7),2);
-        
+
         return avg;
 
     }

@@ -15,6 +15,7 @@ namespace QuanLyHocSinhClient.Models
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
+        public DateTime? BirthDay { get; set; }
         public Boolean Sex { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
@@ -23,7 +24,7 @@ namespace QuanLyHocSinhClient.Models
         public string PhoneNumberParent { get; set; }
         public string CMND { get; set; }
         public string PlaceOfIssue { get; set; }
-        public string DateOfIssue { get; set; }
+        public DateTime? DateOfIssue { get; set; }
         public string Nationality { get; set; }
         public string Folk { get; set; }
         public string Religion { get; set; }

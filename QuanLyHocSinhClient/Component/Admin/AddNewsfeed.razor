@@ -1,0 +1,54 @@
+﻿@page "/addNewsfeed"
+@inject ISnackbar Snackbar
+@if (Program.Teacher != null)
+{
+    <h3>Thêm thông báo</h3>
+
+    <MudGrid Class="mt-4">
+        <MudTextField Label="Tiêu đề" @bind-Value="@newsFeed.Title" Variant="Variant.Text"></MudTextField>
+    </MudGrid>
+    <MudGrid Class="mt-4">
+        <MudTextField T="string" Label="Nội dung" Variant="Variant.Text" @bind-Value="newsFeed.Content" Lines="5" />
+    </MudGrid>
+    <MudGrid Class="mt-4">
+        <MudCard Style="width:100%">
+            <MudCardActions>
+                <InputFile id="fileInput" OnChange="UploadFiles" hidden multiple />
+                <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Secondary" for="fileInput">Chọn file</MudButton>
+            </MudCardActions>
+            <MudCardMedia Image="@newsFeed.Image"></MudCardMedia>
+        </MudCard>
+
+    </MudGrid>
+    <MudGrid Class="mt-4">
+        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small" OnClick="@OnValidSubmit">Thêm</MudButton>
+    </MudGrid>
+}else{
+    <p>Không thể truy cập!</p>
+}
+
+
+
+@code {
+    NewsFeed newsFeed = new NewsFeed();
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+    private void UploadFiles(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles())
+        {
+            files.Add(file);
+        }
+        //TODO upload the files to the server
+    }
+    protected async override Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    private async void OnValidSubmit()
+    {
+
+        await API<NewsFeed>.Instance.PostAsync("/api/NewsFeed", newsFeed);
+        Snackbar.Add("Thêm thành công");
+    }
+}
+

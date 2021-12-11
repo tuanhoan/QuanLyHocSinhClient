@@ -1,66 +1,71 @@
-﻿@page "/std"
+﻿@page "/importStudent"
 @using QuanLyHocSinhClient.Services.ExcelService
 @inject ReadExcel ReadExcel
 
 
-
-<InputFile id="fileInput" OnChange="UploadFiles" hidden multiple />
-<div class="d-flex">
-    <MudButton HtmlTag="label"
-               Variant="Variant.Filled"
-               Color="Color.Primary"
-               StartIcon="@Icons.Filled.CloudUpload"
-               for="fileInput">
-        Upload Files
-    </MudButton>
-    @if (classes != null)
-    {
-        <MudSelect T="int" Label="Lớp Học" Strict="true" Variant="Variant.Outlined" @bind-Value="@classId" Format="F2" AnchorOrigin="Origin.BottomCenter">
-            @foreach (var item in classes)
-            {
-                <MudSelectItem T="int" Value="item.Id">@item.Name</MudSelectItem>
-            }
-        </MudSelect>
-    }
-    <MudButton HtmlTag="label"
-               Variant="Variant.Filled"
-               Color="Color.Primary"
-               OnClick="Upload"
-               StartIcon="@Icons.Filled.CloudUpload">
-        Comfirm
-    </MudButton>
-</div>
-
-
-@if (files != null)
+@if (Program.Teacher != null)
 {
-    <MudText Typo="@Typo.h6">@files.Count() File@(files.Count() == 1 ? "" : "s"):</MudText>
-    <MudList>
-        @foreach (var file in files)
+    <InputFile id="fileInput" OnChange="UploadFiles" hidden multiple />
+    <div class="d-flex">
+        <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Filled.CloudUpload"
+                   for="fileInput">
+            Upload Files
+        </MudButton>
+        @if (classes != null)
         {
-            <MudListItem Icon="@Icons.Filled.AttachFile" @key="@file">
-                @file.Name <code>@file.Size bytes</code>
-            </MudListItem>
+            <MudSelect T="int" Label="Lớp Học" Strict="true" Variant="Variant.Outlined" @bind-Value="@classId" Format="F2" AnchorOrigin="Origin.BottomCenter">
+                @foreach (var item in classes)
+                {
+                    <MudSelectItem T="int" Value="item.Id">@item.Name</MudSelectItem>
+                }
+            </MudSelect>
         }
-    </MudList>
+        <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   OnClick="Upload"
+                   StartIcon="@Icons.Filled.CloudUpload">
+            Comfirm
+        </MudButton>
+    </div>
+
+
+    @if (files != null)
+    {
+        <MudText Typo="@Typo.h6">@files.Count() File@(files.Count() == 1 ? "" : "s"):</MudText>
+        <MudList>
+            @foreach (var file in files)
+            {
+                <MudListItem Icon="@Icons.Filled.AttachFile" @key="@file">
+                    @file.Name <code>@file.Size bytes</code>
+                </MudListItem>
+            }
+        </MudList>
+    }
+
+    <MudTable Items="@_listStd" Hover="true" Breakpoint="Breakpoint.Sm" Loading="false" LoadingProgressColor="Color.Info">
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>BirthDay</MudTh>
+            <MudTh>Giới tính</MudTh>
+            <MudTh>Email</MudTh>
+            <MudTh>PhoneNumber</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Nr">@context.Name</MudTd>
+            <MudTd DataLabel="Sign">@context.Address</MudTd>
+            <MudTd DataLabel="Name">@context.Sex</MudTd>
+            <MudTd DataLabel="Position">@context.Email</MudTd>
+            <MudTd DataLabel="Molar mass">@context.PhoneNumber</MudTd>
+        </RowTemplate>
+    </MudTable>
+}else{
+    <p>Không thể truy cập!</p>
 }
 
-<MudTable Items="@_listStd" Hover="true" Breakpoint="Breakpoint.Sm" Loading="false" LoadingProgressColor="Color.Info">
-    <HeaderContent>
-        <MudTh>Name</MudTh>
-        <MudTh>BirthDay</MudTh>
-        <MudTh>Giới tính</MudTh>
-        <MudTh>Email</MudTh>
-        <MudTh>PhoneNumber</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="Nr">@context.Name</MudTd>
-        <MudTd DataLabel="Sign">@context.Address</MudTd>
-        <MudTd DataLabel="Name">@context.Sex</MudTd>
-        <MudTd DataLabel="Position">@context.Email</MudTd>
-        <MudTd DataLabel="Molar mass">@context.PhoneNumber</MudTd>
-    </RowTemplate>
-</MudTable>
 
 
 
@@ -87,7 +92,7 @@
             item.ClassId = classId;
             item.CMND = "";
             item.NameParent = "";
-            item.DateOfIssue = DateTime.Now.ToString("dd/MM/yyyy");
+            item.DateOfIssue = DateTime.Now;
             item.Folk = "";
             item.Image = "";
             item.Religion = "";
