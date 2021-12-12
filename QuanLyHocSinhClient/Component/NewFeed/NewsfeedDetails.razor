@@ -12,6 +12,11 @@
         <h3>@_newsFeed.Title</h3>
         <MudCardMedia Image="@_newsFeed.Image"></MudCardMedia>
         <p>@_newsFeed.Content</p>
+        @if (_listImg.Count != 0)
+        {
+            <DriveThumbnail Classify="UploadClassify.DocumentData" Id="0" ListPath="@_listImg"></DriveThumbnail>
+        }
+
         <h2>Comment</h2>
 
         <div class="mt-8 grey lighten-4" id="paste-block">
@@ -44,6 +49,7 @@
     NewsFeed _newsFeed = new NewsFeed();
     Comment comment = new Comment();
     List<Comment> comments = new List<Comment>();
+    List<string> _listImg = new();
 
 
     DriveUpload _driveUpload;
@@ -77,5 +83,10 @@
         _newsFeed = await API<NewsFeed>.Instance.GetAsync($"/api/NewsFeed/{Id}");
         await GoogleDriveServices.PrepareFolderId(_newsFeed.Id, UploadClassify.CustomerData);
         comments = await API<List<Comment>>.Instance.GetAsync($"/api/Comment/ByNewsFeedId/{Id}");
+        if (_newsFeed.Image != null)
+        {
+            _listImg = _newsFeed.Image.Split("|").ToList();
+            _listImg.RemoveAt(_listImg.Count - 1);
+        }
     }
 }

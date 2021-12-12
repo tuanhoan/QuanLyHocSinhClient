@@ -93,6 +93,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await DriveServices.PrepareFolderId(Id, UploadClassify.CustomerData);
         _data = await DriveServices.GetFilesMetadataAsync(ListPath, Classify, Id);
     }
     //protected override async Task OnAfterRenderAsync(bool firstRender)

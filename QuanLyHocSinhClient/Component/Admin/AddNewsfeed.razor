@@ -1,5 +1,6 @@
 ﻿@page "/addNewsfeed"
 @inject ISnackbar Snackbar
+@inject GoogleDriveServices GoogleDriveServices
 @if (Program.Teacher != null)
 {
     <h3>Thêm thông báo</h3>
@@ -10,20 +11,17 @@
     <MudGrid Class="mt-4">
         <MudTextField T="string" Label="Nội dung" Variant="Variant.Text" @bind-Value="newsFeed.Content" Lines="5" />
     </MudGrid>
-    <MudGrid Class="mt-4">
-        <MudCard Style="width:100%">
-            <MudCardActions>
-                <InputFile id="fileInput" OnChange="UploadFiles" hidden multiple />
-                <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Secondary" for="fileInput">Chọn file</MudButton>
-            </MudCardActions>
-            <MudCardMedia Image="@newsFeed.Image"></MudCardMedia>
-        </MudCard>
-
+    <MudGrid>
+        <MudItem xs="10">
+            <DriveUpload Id="@newsFeed.Id" @ref="_driveUpload" Classify="UploadClassify.CustomerData"></DriveUpload>
+        </MudItem>
+        <MudItem xs="2" Class="d-flex flex-row-reverse">
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="HandleSubmit">Gửi</MudButton>
+        </MudItem>
     </MudGrid>
-    <MudGrid Class="mt-4">
-        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small" OnClick="@OnValidSubmit">Thêm</MudButton>
-    </MudGrid>
-}else{
+}
+else
+{
     <p>Không thể truy cập!</p>
 }
 
@@ -32,6 +30,7 @@
 @code {
     NewsFeed newsFeed = new NewsFeed();
     IList<IBrowserFile> files = new List<IBrowserFile>();
+    DriveUpload _driveUpload;
     private void UploadFiles(InputFileChangeEventArgs e)
     {
         foreach (var file in e.GetMultipleFiles())
@@ -49,6 +48,30 @@
 
         await API<NewsFeed>.Instance.PostAsync("/api/NewsFeed", newsFeed);
         Snackbar.Add("Thêm thành công");
+    }
+    public async Task HandleSubmit()
+    {
+        if (_driveUpload.IsUpload)
+        {
+            newsFeed.Image = "";
+            await _driveUpload.UploadAsync();
+            if (_driveUpload.IsUploadComplete) // check upload error: true when upload success; false when upload failed
+            {
+                foreach (var item in _driveUpload.ResultPath)
+                {
+                    newsFeed.Image += item + "|";
+                }
+            }
+            else
+                return;
+        } 
+        newsFeed.CreateAt = DateTime.Now;
+
+
+        newsFeed = await API<NewsFeed>.Instance.PostAsync("/api/newsfeed", newsFeed);
+
+        newsFeed = new NewsFeed();
+        Snackbar.Add("Lưu thành công");
     }
 }
 

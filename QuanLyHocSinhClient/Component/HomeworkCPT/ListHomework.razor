@@ -1,4 +1,5 @@
 ﻿@page "/homework"
+@inject GoogleDriveServices GoogleDriveServices
 <h3>List</h3>
 @if (homeworks == null)
 {
@@ -9,8 +10,8 @@ else
     foreach (var item in homeworks)
     {
 
-        <ItemHomework Data="item" ></ItemHomework>
-        
+        <ItemHomework Data="item"></ItemHomework>
+
     }
 }
 
@@ -20,7 +21,9 @@ else
     protected override async Task OnInitializedAsync()
     {
         homeworks = await API<List<Homework>>.Instance.GetAsync("api/Homework");
+        
         StateHasChanged();
+
     }
 
 }

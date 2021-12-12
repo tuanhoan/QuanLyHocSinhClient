@@ -21,10 +21,10 @@
             int testTypeId = testTypes[i].Id;
             string dataLabel = testTypes[i].TestName;
             var diem = @scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == testTypeId) != null ? scores.FirstOrDefault(x => x.SubjectId == context.Id && x.TestTypeId == testTypeId).Point : 0;
-    <MudTd DataLabel="@dataLabel">@diem</MudTd>
+            <MudTd DataLabel="@dataLabel">@(diem==-1?"":diem)</MudTd>
 
         }
-    <MudTd DataLabel="Trung bình">@AverageScore(context.Id)</MudTd>
+        <MudTd DataLabel="Trung bình">@(AverageScore(context.Id)==-1?"": AverageScore(context.Id))</MudTd>
     </RowTemplate>
 </MudTable>
 
@@ -52,7 +52,7 @@
         var d15p = scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 2) != null ? scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 2).Point : 0;
         var d60p = scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 3) != null ? scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 3).Point : 0;
         var hocki = scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 4) != null ? scores.FirstOrDefault(x => x.SubjectId == subjectId && x.TestTypeId == 4).Point : 0;
-        avg = Math.Round(((mieng + d15p + d60p * 2 + hocki * 3) / 7),2);
+        avg = Math.Round(((mieng + d15p + d60p * 2 + hocki * 3) / 7), 2);
 
         return avg;
 

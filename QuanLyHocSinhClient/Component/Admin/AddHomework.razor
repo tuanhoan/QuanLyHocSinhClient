@@ -1,6 +1,7 @@
 ﻿
 @page "/addHomework"
 @inject ISnackbar Snackbar
+@inject GoogleDriveServices GoogleDriveServices
 @if (Program.Teacher != null)
 {
     <h3>AddHomework</h3>
@@ -11,29 +12,26 @@
     <MudGrid Class="mt-4">
         <MudTextField T="string" Label="Nội dung" Variant="Variant.Text" @bind-Value="homework.Content" Lines="5" />
     </MudGrid>
-    <MudGrid Class="mt-4">
-        <MudCard Style="width:100%">
-            <MudCardActions>
-                <InputFile id="fileInput" OnChange="UploadFiles" hidden multiple />
-                <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Secondary" for="fileInput">Thêm ảnh</MudButton>
-            </MudCardActions>
-            <MudCardMedia Image="@homework.Image"></MudCardMedia>
-        </MudCard>
-
+    <MudGrid>
+        <MudItem xs="10">
+            <DriveUpload Id="@homework.Id" @ref="_driveUpload" Classify="UploadClassify.DocumentData"></DriveUpload>
+        </MudItem>
+        <MudItem xs="2" Class="d-flex flex-row-reverse">
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="HandleSubmit">Gửi</MudButton>
+        </MudItem>
     </MudGrid>
-    <MudGrid Class="mt-4">
-        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small" OnClick="@OnValidSubmit">Save</MudButton>
-    </MudGrid>  }
-            else
-            {
-                <p>Không có quyền truy cập!</p>
-            }
+}
+else
+{
+    <p>Không có quyền truy cập!</p>
+}
 
 
 
 @code {
     Homework homework = new Homework();
     Teacher teacher = new Teacher();
+    DriveUpload _driveUpload;
     IList<IBrowserFile> files = new List<IBrowserFile>();
     private void UploadFiles(InputFileChangeEventArgs e)
     {
@@ -47,14 +45,33 @@
     {
         await base.OnInitializedAsync();
         teacher = Program.Teacher;
+        await GoogleDriveServices.PrepareFolderId(homework.Id, UploadClassify.DocumentData);
 
 
     }
-    private async void OnValidSubmit()
+    public async Task HandleSubmit()
     {
+        if (_driveUpload.IsUpload)
+        {
+            homework.Image = "";
+            await _driveUpload.UploadAsync();
+            if (_driveUpload.IsUploadComplete) // check upload error: true when upload success; false when upload failed
+            {
+                foreach (var item in _driveUpload.ResultPath)
+                {
+                    homework.Image += item + "|";
+                }
+            }
+            else
+                return;
+        }
         homework.TeacherId = teacher.Id;
         homework.CreateAt = DateTime.Now;
-        await API<Homework>.Instance.PostAsync("/api/Homework", homework);
+
+
+        homework  = await  API<Homework>.Instance.PostAsync("/api/Homework", homework);
+
+        homework = new Homework();
         Snackbar.Add("Lưu thành công");
     }
 }

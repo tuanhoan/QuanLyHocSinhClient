@@ -7,12 +7,19 @@
     <MudGrid Class="mt-10">
         <MudItem xs="6" sm="3">
             <MudCard>
-                <MudCardMedia Image="@_data.FirstOrDefault().Item2" Height="250" />
+                @if (_data.Count == 0)
+                {
+                    <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Small" />
+                }
+                else
+                {
+                    <MudCardMedia Image="@_data.FirstOrDefault().Item2" Height="250"/>
+                } 
                 <MudCardContent>
                     <MudText Typo="Typo.h5">@Program.Student.Name</MudText>
                 </MudCardContent>
                 <MudCardActions>
-                    <InputFile id="fileInput" OnChange="UploadFiles" hidden />
+                    <InputFile id="fileInput" OnChange="UploadFiles" hidden/>
                     <MudButton HtmlTag="label" Variant="Variant.Text" Color="Color.Primary" for="fileInput">Thay đổi ảnh</MudButton>
                 </MudCardActions>
             </MudCard>

@@ -1,7 +1,16 @@
-﻿<MudCard>
+﻿@using System.IO
+@inject GoogleDriveServices GoogleDriveServices
+<MudCard>
     <MudGrid Spacing="3" Justify="Justify.Center">
         <MudItem xs="6" sm="4">
-            <MudCardMedia Image="@Data.Image" Height="200" />
+            @if (!string.IsNullOrEmpty(imgLink))
+            {
+                <img src="@imgLink" loading="lazy" style="max-width:45vw; max-height:45vh;" alt="Ảnh phóng to" />
+            }
+            else
+            {
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Small" />
+            }
         </MudItem>
         <MudItem xs="6" sm="8">
             <MudCardContent>
@@ -15,12 +24,29 @@
 @code
 {
     [Parameter] public NewsFeed Data { get; set; }
-    protected override void OnInitialized()
+    string imgLink = "";
+    List<(string Link, string PlaceHolder, string Path)> _data = new();
+    protected override async Task OnInitializedAsync()
     {
         if (Data.Content.Length > 200)
         {
             Data.Content = Data.Content.Substring(0, 200) + " ...";
         }
-        base.OnInitialized();
+        if (Data.Image != null)
+        {
+            var _listImg = Data.Image.Split("|").ToList();
+            _listImg.RemoveAt(_listImg.Count - 1);
+            await GoogleDriveServices.PrepareFolderId(0, UploadClassify.CustomerData);
+            _data = await GoogleDriveServices.GetFilesMetadataAsync(_listImg, UploadClassify.CustomerData, 0);
+            foreach (var item in _data)
+            {
+                var ext = Path.GetExtension(item.Path);
+                if (ext.Equals(".PNG") || ext.Equals(".jpg"))
+                {
+                    imgLink = item.PlaceHolder;
+                    break;
+                }
+            }
+        }
     }
 }

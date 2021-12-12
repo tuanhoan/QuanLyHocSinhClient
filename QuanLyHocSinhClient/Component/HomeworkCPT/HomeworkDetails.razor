@@ -10,8 +10,14 @@
     else
     {
         <h3>@_homework.Title</h3>
-        <MudCardMedia Image="@_homework.Image"></MudCardMedia>
+        @*<MudCardMedia Image="@_homework.Image"></MudCardMedia>*@
         <p>@_homework.Content</p>
+
+        @if (_listImg.Count != 0)
+        {
+            <DriveThumbnail Classify="UploadClassify.DocumentData" Id="0" ListPath="@_listImg"></DriveThumbnail>
+        }
+
         <h2>Comment</h2>
 
         <div class="mt-8 grey lighten-4" id="paste-block">
@@ -25,6 +31,7 @@
                 </MudItem>
             </MudGrid>
         </div>
+        
         @foreach (var item in homeworkSubmits)
         {
             <CMTItem Data="item"></CMTItem>
@@ -50,6 +57,7 @@
     bool EditorEnabled = true;
 
     List<string> _listSource = new();
+    List<string> _listImg = new();
 
     public async Task HandleSubmit()
     {
@@ -77,5 +85,11 @@
         _homework = await API<Homework>.Instance.GetAsync($"/api/Homework/{Id}");
         await GoogleDriveServices.PrepareFolderId(_homework.Id, UploadClassify.CustomerData);
         homeworkSubmits = await API<List<HomeworkSubmit>>.Instance.GetAsync($"/api/HomeworkSubmit/ByHomeworkId/{Id}");
+        if (_homework.Image != null)
+        {
+            _listImg = _homework.Image.Split("|").ToList();
+            _listImg.RemoveAt(_listImg.Count-1);
+        }
+        
     }
 }
