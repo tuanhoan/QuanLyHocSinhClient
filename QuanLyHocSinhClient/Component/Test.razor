@@ -1,22 +1,38 @@
 ﻿
-    @page "/timetable"
-
-
+@page "/timetable"
 @using System.Globalization
-<MudButton OnClick="NextWeek">Week</MudButton>
-<MudGrid Class="mt-2">
-    <MudItem>
-        <MudText Typo="Typo.h4"><b>Thời khóa biểu</b></MudText>
-    </MudItem>
-    <MudItem>
-        <MudIcon Icon="@Icons.Material.Filled.AutoStories" Size="Size.Large"></MudIcon>
-    </MudItem>
-</MudGrid>
-@for (int i = 0; i < 6; i++)
+@if (!IsLoading)
 {
-    int index = i;
-    <Timetable title="@ConvertDateToString(monday.AddDays(index))" scheduleDetails="@getScheduleDetailByDay(monday.AddDays(index))"></Timetable>
+    <p>Loading....</p>
 }
+else
+{
+    <MudGrid Class="mt-3">
+        <MudItem>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LastWeek">Tuần trước</MudButton>
+        </MudItem>
+        <MudItem>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ThisWeek">Tuần này</MudButton>
+        </MudItem>
+        <MudItem>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NextWeek">Tuần tới</MudButton>
+        </MudItem>
+    </MudGrid>
+    <MudGrid Class="mt-2">
+        <MudItem>
+            <MudText Typo="Typo.h4"><b>Thời khóa biểu</b></MudText>
+        </MudItem>
+        <MudItem>
+            <MudIcon Icon="@Icons.Material.Filled.AutoStories" Size="Size.Large"></MudIcon>
+        </MudItem>
+    </MudGrid>
+    @for (int i = 0; i < 6; i++)
+    {
+        int index = i;
+        <Timetable title="@ConvertDateToString(monday.AddDays(index))" scheduleDetails="@getScheduleDetailByDay(monday.AddDays(index))"></Timetable>
+    }
+}
+
 @*@foreach(var item in scheduleDetails)
     {
         <p>@item.SubjectId</p>
@@ -25,32 +41,42 @@
     List<Schedule> listModel = new List<Schedule>();
     DateTime title;
     DateTime monday = DateTime.Now.AddDays(-1 * (7 + (DateTime.Now.DayOfWeek - DayOfWeek.Monday)) % 7).Date;
-
+    bool IsLoading = false;
     //List<Subject> subjects = new
     List<ScheduleDetail> scheduleDetails = new List<ScheduleDetail>();
 
     protected async override Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
+
         string param = "25112021";
         //listModel = await API<List<Schedule>>.QLTKB.GetAsync("/api/Su");
         scheduleDetails = await API<List<ScheduleDetail>>.Instance.GetAsync($"/api/ScheduleDetails/scheduleDetailByDate/{param}");
-
+        IsLoading = true;
     }
     string ConvertDateToString(DateTime dateTime)
     {
         var param = dateTime.ToString("ddMMyyyy");
         title = DateTime.ParseExact(param, "ddMMyyyy", CultureInfo.InvariantCulture);
-        return title.DayOfWeek + ", Ngay" + title.ToString("dd/MM/yyyy");
+        return title.DayOfWeek + ", Ngay " + title.ToString("dd/MM/yyyy");
     }
     List<ScheduleDetail> getScheduleDetailByDay(DateTime dateTime)
     {
         var param = dateTime.ToString("ddMMyyyy");
         return API<List<ScheduleDetail>>.Instance.GetAsync($"/api/ScheduleDetails/scheduleDetailByDate/{param}").Result;
     }
-    void NextWeek()
+    void LastWeek()
     {
         monday = monday.AddDays(-7);
-        
+
+    }
+    void ThisWeek()
+    {
+        monday = DateTime.Now.AddDays(-1 * (7 + (DateTime.Now.DayOfWeek - DayOfWeek.Monday)) % 7).Date;
+
+    }
+    void NextWeek()
+    {
+        monday = monday.AddDays(7);
+
     }
 }

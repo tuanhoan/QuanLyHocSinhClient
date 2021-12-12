@@ -9,6 +9,7 @@
         {
             if (item.SubjectId == context.SubjectId)
             {
+                
                 <MudTd>@item.Name</MudTd>
             }
         }
@@ -23,7 +24,6 @@
     [Parameter] public string title { get; set; }
     [Parameter] public List<ScheduleDetail> scheduleDetails { get; set; }
     List<Teacher> teachers = new List<Teacher>();
-    
     protected async override Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();

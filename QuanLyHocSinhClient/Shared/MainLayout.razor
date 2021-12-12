@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager Navigation
 @inject GoogleDriveServices GoogleDriveServices
+@inject IDialogService DialogService
 <MudThemeProvider />
 
 <MudLayout>
@@ -8,7 +9,8 @@
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Class="ml-3">Application</MudText>
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+        @*<MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />*@
+        <MudButton OnClick="LogOut" Variant="Variant.Filled" Color="Color.Secondary">Đăng xuất</MudButton>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu></NavMenu>
@@ -29,7 +31,7 @@
     protected override async Task OnInitializedAsync()
     {
         if (Program.token == null)
-            Navigation.NavigateTo("/login", true); 
+            Navigation.NavigateTo("/login", true);
     }
 
     protected override async void OnAfterRender(bool firstRender)
@@ -37,6 +39,12 @@
         if (Program.token == null)
             Navigation.NavigateTo("/login", true);
 
+
+    }
+    void LogOut()
+    {
+        DialogService.Show<LogOut>("");
+       
 
     }
 

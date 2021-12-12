@@ -1,0 +1,24 @@
+﻿@inject NavigationManager Navigation
+<MudDialog>
+    <DialogContent>
+        Bạn có muốn đăng xuất?
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+    private async void Submit()
+    {
+        Program.token = null;
+
+        Navigation.NavigateTo("/login", true);
+    }
+}
