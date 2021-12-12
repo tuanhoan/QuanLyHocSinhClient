@@ -1,8 +1,9 @@
 ﻿@page "/"
-<h3>List</h3>
-@if (newsFeeds == null)
+<h3>Bảng tin</h3>
+@if (!IsLoading)
 {
-    <p>Loading</p>
+   <MudProgressLinear Color = "Color.Primary" Indeterminate = "true" Class = "my-7" />
+    <MudProgressLinear Color = "Color.Secondary" Indeterminate = "true" Class = "my-7" />
 }
 else
 {
@@ -16,9 +17,11 @@ else
 
 @code {
     List<NewsFeed> newsFeeds = new List<NewsFeed>();
+    bool IsLoading = false;
     protected override async Task OnInitializedAsync()
     {
         newsFeeds = await API<List<NewsFeed>>.Instance.GetAsync("api/newsfeed");
+        IsLoading = true;
     }
 
 }

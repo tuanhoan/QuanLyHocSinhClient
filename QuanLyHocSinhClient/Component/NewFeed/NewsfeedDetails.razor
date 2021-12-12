@@ -10,7 +10,10 @@
     else
     {
         <h3>@_newsFeed.Title</h3>
-        <MudCardMedia Image="@_newsFeed.Image"></MudCardMedia>
+        <MudItem xs="6" sm="6">
+            <MudCardMedia Image="@_newsFeed.Image" Height="300"></MudCardMedia>
+        </MudItem>
+        
         <p>@_newsFeed.Content</p>
         <h2>Comment</h2>
 
@@ -30,9 +33,9 @@
             <CMTItem Data="item"></CMTItem>
         }
 
-        <br/>
-        <br/>
-        <br/>
+        <br />
+        <br />
+        <br />
     }
 </div>
 

@@ -24,13 +24,11 @@
             <MudGrid>
                 <MudItem xs="6" sm="6">
                     <MudText>Họ và tên: @Program.Student.Name</MudText>
-                    <MudText>Lớp: @Program.Student.ClassId</MudText>
                     <MudText>Niên Khóa: 2018-2022</MudText>
                 </MudItem>
                 <MudItem xs="6" sm="6">
 
                     <MudText>Quê quán: @Program.Student.Address</MudText>
-                    <MudText>Số điện thoại: @Program.Student.PhoneNumber</MudText>
                     <MudText>Ngày sinh: @Program.Student.BirthDay</MudText>
                 </MudItem>
             </MudGrid>
@@ -156,6 +154,7 @@ else
 
 @code {
     DateTime? date = DateTime.Today;
+    bool gt = true;
     List<(string, string, string)> _data = new List<(string, string, string)>();
     private async void OnValidSubmit()
     {
@@ -251,4 +250,5 @@ else
     {
         DialogService.Show<ChangePassword>("Đổi mật khẩu");
     }
+
 }
