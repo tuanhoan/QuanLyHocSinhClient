@@ -1,0 +1,94 @@
+﻿@page "/dashboard"
+@if (Program.Teacher != null)
+{
+    @if (!isLoading)
+    {
+        <div class="d-flex flex-wrap">
+            @for (int i = 0; i < 9; i++)
+            {
+                <MudPaper Class="pa-4 mr-3 mb-3">
+                    <MudSkeleton />
+                    <MudSkeleton SkeletonType="SkeletonType.Circle" Width="250px" Height="50" />
+                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="250px" Height="200" />
+                </MudPaper> 
+            }
+        </div> 
+    }
+    else
+    {
+        <h3>Thống kê</h3>
+        <div>
+            <MudSelect T="int" Label="Lớp" ValueChanged="e => GetByClass(e)" Variant="Variant.Outlined" Format="F2">
+                <MudSelectItem T="int" Value="0">Toàn trường</MudSelectItem>
+                @foreach (var item in classes)
+                {
+                    <MudSelectItem T="int" Value="@item.Id">@item.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </div>
+   
+        <div class="d-flex flex-wrap">
+            @foreach (var item in subjects)
+            {
+                <MudPaper Class="pa-4 mr-3 mb-3">
+                    <MudChart ChartType="ChartType.Pie" InputData="@GetData(item)" InputLabels="@GetLabel(item)" Width="250px" Height="250px" />
+                    <MudText Typo="Typo.h6">Môn @item</MudText>
+                </MudPaper>
+            }
+        </div>
+    }
+    
+}
+else
+{
+    <p>Không thể truy cập!</p>
+}
+
+@code {
+    List<Score> scores = new List<Score>();
+    string[] labels = new[] { "8", "6.5->8", "5->6.5", "0->5" };
+    List<string> subjects = new List<string>();
+    List<Class> classes = new List<Class>();
+    List<Score> scoresTmp = new List<Score>();
+    bool isLoading = false;
+    protected override async Task OnInitializedAsync()
+    {
+        scores = await API<List<Score>>.Instance.GetAsync($"api/Scores/BySemesterId/1");
+        scoresTmp = scores;
+        subjects = scores.Select(x => x.SubjectNavigation.Name).Distinct().ToList();
+        classes = await API<List<Class>>.Instance.GetAsync($"/api/Classs");
+        isLoading = true; 
+    }
+
+    void GetByClass(int Id)
+    {
+        if (Id == 0)
+        {
+            scores = scoresTmp;
+            return;
+        }
+        scores = scoresTmp.Where(x => x.StudentNavigation.ClassId == Id).ToList();
+    }
+
+    double[] GetData(string name)
+    {
+        return new double[]
+        {
+        scores.Count(x => x.Point >= 8&&x.SubjectNavigation.Name.Equals(name)),
+        scores.Count(x => x.Point is >= 6.5 and < 8&&x.SubjectNavigation.Name.Equals(name)),
+        scores.Count(x => x.Point is >= 5 and < 6.5&&x.SubjectNavigation.Name.Equals(name)),
+        scores.Count(x => x.Point <5&&x.SubjectNavigation.Name.Equals(name)),
+                                };
+    }
+
+    string[] GetLabel(string name)
+    {
+        return new string[]
+        {
+            ">8 (" + scores.Count(x => x.Point >= 8 && x.SubjectNavigation.Name.Equals(name)) +")",
+            "6.5->8 (" + scores.Count(x => x.Point is >= 6.5 and < 8 && x.SubjectNavigation.Name.Equals(name))+")",
+            "5->6.5 (" + scores.Count(x => x.Point is >= 5 and < 6.5 && x.SubjectNavigation.Name.Equals(name))+")",
+            "0->5 (" + scores.Count(x => x.Point < 5 && x.SubjectNavigation.Name.Equals(name))+")"
+                };
+    }
+}

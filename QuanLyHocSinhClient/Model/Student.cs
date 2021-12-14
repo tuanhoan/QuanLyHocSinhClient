@@ -11,12 +11,14 @@ namespace QuanLyHocSinhClient.Models
         public Student()
         {
             Comments = new HashSet<Comment>();
+            HomeworkSubmits = new HashSet<HomeworkSubmit>();
+            Scores = new HashSet<Score>();
         }
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
-        public DateTime? BirthDay { get; set; }
         public Boolean Sex { get; set; }
+        public DateTime? Birthday { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string Image { get; set; }
@@ -24,12 +26,14 @@ namespace QuanLyHocSinhClient.Models
         public string PhoneNumberParent { get; set; }
         public string CMND { get; set; }
         public string PlaceOfIssue { get; set; }
-        public DateTime? DateOfIssue { get; set; }
         public string Nationality { get; set; }
         public string Folk { get; set; }
         public string Religion { get; set; }
+        public DateTime? DateOfIssue { get; set; }
         public int ClassId { get; set; }
         public virtual Class ClassNavigation { get; set; }
-        public  virtual  ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<HomeworkSubmit> HomeworkSubmits { get; set; }
+        public virtual ICollection<Score> Scores { get; set; }
     }
 }
