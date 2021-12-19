@@ -19,7 +19,7 @@
         }
     </MudSelect>
 
-    <MudTable Items="@subjects" OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" RowEditCommit="ItemHasBeenCommitted">
+    <MudTable Items="@subjects" OnCommitEditClick="@(() => Snackbar.Add("Cập nhật thành công"))" RowEditCommit="ItemHasBeenCommitted">
         <ToolBarContent>
             <MudText Typo="Typo.h6">Điểm</MudText>
             <MudSpacer />

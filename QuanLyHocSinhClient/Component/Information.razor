@@ -2,6 +2,7 @@
 @inject ISnackbar Snackbar
 @inject GoogleDriveServices DriveServices
 @inject IDialogService DialogService
+
 @if (Program.Student != null)
 {
     <MudGrid Class="mt-10">
@@ -13,13 +14,13 @@
                 }
                 else
                 {
-                    <MudCardMedia Image="@_data.FirstOrDefault().Item2" Height="250"/>
-                } 
+                    <MudCardMedia Image="@_data.FirstOrDefault().Item2" Height="250" />
+                }
                 <MudCardContent>
                     <MudText Typo="Typo.h5">@Program.Student.Name</MudText>
                 </MudCardContent>
                 <MudCardActions>
-                    <InputFile id="fileInput" OnChange="UploadFiles" hidden/>
+                    <InputFile id="fileInput" OnChange="UploadFiles" hidden />
                     <MudButton HtmlTag="label" Variant="Variant.Text" Color="Color.Primary" for="fileInput">Thay đổi ảnh</MudButton>
                 </MudCardActions>
             </MudCard>
@@ -36,7 +37,7 @@
                 <MudItem xs="6" sm="6">
 
                     <MudText>Quê quán: @Program.Student.Address</MudText>
-                    <MudText>Ngày sinh: @Program.Student.Birthday</MudText>
+                    <MudText>Ngày sinh: @ConvertDateToString(Program.Student.Birthday)</MudText>
                 </MudItem>
             </MudGrid>
             <MudText Align="Align.Left" Class="mt-10"><b>Thông tin sinh viên.</b></MudText>
@@ -58,7 +59,7 @@
                     <MudTextField @bind-Value="@Program.Student.Religion" Label="Tôn giáo" Variant="Variant.Text"></MudTextField>
 
                     <div class="d-flex">
-                        <MudDatePicker Class="w-50" Label="Ngày cấp" @bind-Date="@Program.Student.DateOfIssue" DisableToolbar="true" />
+                        <MudDatePicker Class="w-50" PickerVariant="PickerVariant.Dialog" Label="Ngày cấp" @bind-Date="@Program.Student.DateOfIssue" DateFormat="dd/MM/yyyy" />
                         <span></span>
                         <MudTextField @bind-Value="@Program.Student.PlaceOfIssue" Label="Nơi cấp" Variant="Variant.Text"></MudTextField>
                     </div>
@@ -67,9 +68,14 @@
             <MudDivider />
             <MudGrid>
 
-                <MudItem xs="12" sm="12">
+                <MudItem xs="12" sm="6">
 
                     <MudTextField @bind-Value="@Program.Student.Address" Label="Địa chỉ" Variant="Variant.Text"></MudTextField>
+
+                </MudItem>
+                <MudItem xs="12" sm="6">
+
+                    <MudDatePicker Class="w-50" PickerVariant="PickerVariant.Dialog" Label="Ngày sinh" @bind-Date="Program.Student.Birthday" DateFormat="dd/MM/yyyy" />
 
                 </MudItem>
             </MudGrid>
@@ -108,17 +114,17 @@ else
             <MudGrid>
                 <MudItem xs="6" sm="6">
                     <MudText>Họ và tên: @Program.Teacher.Name</MudText>
-                    <MudText>Ngày sinh: @Program.Teacher.BirthDay</MudText>
-                    
+                    <MudText>Ngày sinh: @ConvertDateToString(Program.Teacher.BirthDay)</MudText>
+
                 </MudItem>
                 <MudItem xs="6" sm="6">
 
                     <MudText>Quê quán: @Program.Teacher.Address</MudText>
                     <MudText>Số điện thoại: @Program.Teacher.PhoneNumber</MudText>
-                    
+
                 </MudItem>
             </MudGrid>
-            <MudText Align="Align.Left" Class="mt-10"><b>Thông tin sinh viên.</b></MudText>
+            <MudText Align="Align.Left" Class="mt-10"><b>Thông tin giáo viên.</b></MudText>
             <MudDivider />
             <MudGrid>
                 <MudItem xs="12" sm="6">
@@ -137,7 +143,7 @@ else
                     <MudTextField @bind-Value="@Program.Teacher.Religion" Label="Tôn giáo" Variant="Variant.Text"></MudTextField>
 
                     <div class="d-flex">
-                        <MudDatePicker Class="w-50" Label="Ngày cấp" @bind-Date="@Program.Teacher.DateOfIssue" DisableToolbar="true" />
+                        <MudDatePicker Class="w-50" PickerVariant="PickerVariant.Dialog" Label="Ngày cấp" @bind-Date="@Program.Teacher.DateOfIssue" DateFormat="dd/MM/yyyy" />
                         <span></span>
                         <MudTextField @bind-Value="@Program.Teacher.PlaceOfIssue" Label="Nơi cấp" Variant="Variant.Text"></MudTextField>
                     </div>
@@ -146,13 +152,18 @@ else
             <MudDivider />
             <MudGrid>
 
-                <MudItem xs="12" sm="12">
+                <MudItem xs="12" sm="6">
 
                     <MudTextField @bind-Value="@Program.Teacher.Address" Label="Địa chỉ" Variant="Variant.Text"></MudTextField>
 
                 </MudItem>
+                <MudItem xs="12" sm="6">
+
+                    <MudDatePicker Class="w-50" PickerVariant="PickerVariant.Dialog" Label="Ngày sinh" @bind-Date="@Program.Teacher.BirthDay" DateFormat="dd/MM/yyyy" />
+
+                </MudItem>
             </MudGrid>
-            
+
         </MudItem>
     </MudGrid>
 }
@@ -160,13 +171,14 @@ else
 <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small" OnClick="@OnValidSubmit">Save</MudButton>
 
 @code {
-    DateTime? date = DateTime.Today;
+
     bool gt = true;
     List<(string, string, string)> _data = new List<(string, string, string)>();
     private async void OnValidSubmit()
     {
         if (Program.Student != null)
         {
+
             await API<Student>.Instance.PutAsync($"/api/Students/{Program.Student.Id}", Program.Student);
         }
         else
@@ -181,6 +193,7 @@ else
         await base.OnInitializedAsync();
         if (Program.Student != null)
         {
+
             await DriveServices.PrepareFolderId(ConvertGuidToInt(Program.Student.Id.ToString()), UploadClassify.OrderData);
             try
             {
@@ -256,6 +269,12 @@ else
     private void OpenDialog()
     {
         DialogService.Show<ChangePassword>("Đổi mật khẩu");
+    }
+    string ConvertDateToString(DateTime? date)
+    {
+        DateTime dateTime = Convert.ToDateTime(date);
+        var param = dateTime.ToString("dd/MM/yyyy");
+        return param;
     }
 
 }

@@ -48,7 +48,7 @@ else
     protected async override Task OnInitializedAsync()
     {
 
-        string param = "25112021";
+        string param = "11122021";
         //listModel = await API<List<Schedule>>.QLTKB.GetAsync("/api/Su");
         scheduleDetails = await API<List<ScheduleDetail>>.Instance.GetAsync($"/api/ScheduleDetails/scheduleDetailByDate/{param}");
         IsLoading = true;
@@ -57,7 +57,7 @@ else
     {
         var param = dateTime.ToString("ddMMyyyy");
         title = DateTime.ParseExact(param, "ddMMyyyy", CultureInfo.InvariantCulture);
-        return title.DayOfWeek + ", Ngay " + title.ToString("dd/MM/yyyy");
+        return title.DayOfWeek + ", " + title.ToString("dd/MM/yyyy");
     }
     List<ScheduleDetail> getScheduleDetailByDay(DateTime dateTime)
     {
