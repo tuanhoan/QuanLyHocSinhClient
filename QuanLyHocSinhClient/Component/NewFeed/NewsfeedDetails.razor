@@ -10,9 +10,9 @@
     else
     {
         <h3>@_newsFeed.Title</h3>
-        <MudItem xs="6" sm="6">
+        @*<MudItem xs="6" sm="6">
             <MudCardMedia Image="@_newsFeed.Image" Height="300"></MudCardMedia>
-        </MudItem>
+        </MudItem>*@
         
         <p>@_newsFeed.Content</p>
         @if (_listImg.Count != 0)
@@ -78,7 +78,10 @@
         this.comment.NewsFeedId = _newsFeed.Id;
         this.comment.StudentId = Program.Student.Id;
 
-        await API<Comment>.Instance.PostAsync("/api/Comment", comment);
+        comment = await API<Comment>.Instance.PostAsync("/api/Comment", comment);
+        comment.StudentNavigation = Program.Student;
+        comments.Insert(0, comment);
+
         comment = new Comment();
     }
     protected override async Task OnInitializedAsync()
