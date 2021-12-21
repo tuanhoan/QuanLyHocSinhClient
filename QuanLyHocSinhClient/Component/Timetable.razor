@@ -2,9 +2,8 @@
 <MudField Label="@title" Variant="Variant.Filled"></MudField>
 <MudTable Items="@scheduleDetails" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
     
-    <RowTemplate>
-        
-        <MudTd>@context.SubjectNavigation.Name</MudTd>
+    <RowTemplate>    
+        <MudTd Class="col-3">@context.SubjectNavigation.Name</MudTd>
         @foreach (var item in teachers)
         {
             if (item.SubjectId == context.SubjectId)
@@ -13,9 +12,6 @@
                 <MudTd>@item.Name</MudTd>
             }
         }
-
-
-
     </RowTemplate>
 </MudTable>
 

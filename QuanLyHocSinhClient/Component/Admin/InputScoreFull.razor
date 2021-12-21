@@ -7,10 +7,7 @@
         @foreach (var item in classes)
         {
             <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
-
-
         }
-
     </MudSelect>
     <MudSelect ValueChanged="@((Guid e)=>LoadScores(e))" T="Guid" Label="Chọn học sinh" Variant="Variant.Filled">
         @foreach (var item in students)
@@ -18,7 +15,6 @@
             <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
         }
     </MudSelect>
-
     <MudTable Items="@subjects" OnCommitEditClick="@(() => Snackbar.Add("Cập nhật thành công"))" RowEditCommit="ItemHasBeenCommitted">
         <ToolBarContent>
             <MudText Typo="Typo.h6">Điểm</MudText>

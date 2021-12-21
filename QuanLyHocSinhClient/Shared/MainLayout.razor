@@ -10,6 +10,7 @@
         <MudText Typo="Typo.h5" Class="ml-3">MENU</MudText>
         <MudSpacer />
         @*<MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />*@
+        <MudButton OnClick="@((e) => App.DarkMode())">Toggle Dark/Light Mode</MudButton>
         <MudButton OnClick="LogOut" Variant="Variant.Filled" Color="Color.Secondary">Đăng xuất</MudButton>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
@@ -47,5 +48,6 @@
        
 
     }
+
 
 }

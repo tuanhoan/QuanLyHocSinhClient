@@ -2,10 +2,10 @@
 @inject GoogleDriveServices GoogleDriveServices
 <MudCard>
     <MudGrid Spacing="3" Justify="Justify.Center">
-        <MudItem xs="6" sm="4">
+        <MudItem xs="2" sm="4">
             @if (!string.IsNullOrEmpty(imgLink))
             {
-                <img src="@imgLink" style="max-width:45vw; max-height:45vh;" alt="Ảnh phóng to" />
+                <img src="@imgLink" style="width:15vw; height:25vh;" alt="Ảnh phóng to" />
             }
             else
             {
@@ -13,7 +13,7 @@
             }
             @*<MudCardMedia Image="@imgLink" Height="200" />*@
         </MudItem>
-        <MudItem xs="6" sm="8">
+        <MudItem xs="10" sm="8">
             <MudCardContent>
                 <MudLink Href="@($"homework/{Data.Id}")" Underline="Underline.Hover">@Data.Title</MudLink>
                 <MudText Typo="Typo.body2">@Data.Content</MudText>

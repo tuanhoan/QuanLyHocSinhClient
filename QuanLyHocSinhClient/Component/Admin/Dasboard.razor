@@ -53,11 +53,13 @@ else
     bool isLoading = false;
     protected override async Task OnInitializedAsync()
     {
+        isLoading = true;
+        await Task.Delay(1);
         scores = await API<List<Score>>.Instance.GetAsync($"api/Scores/BySemesterId/1");
         scoresTmp = scores;
         subjects = scores.Select(x => x.SubjectNavigation.Name).Distinct().ToList();
         classes = await API<List<Class>>.Instance.GetAsync($"/api/Classs");
-        isLoading = true; 
+        isLoading = true;
     }
 
     void GetByClass(int Id)

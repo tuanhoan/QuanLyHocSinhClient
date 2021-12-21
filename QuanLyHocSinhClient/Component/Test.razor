@@ -7,25 +7,32 @@
 }
 else
 {
-    <MudGrid Class="mt-3">
-        <MudItem>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LastWeek">Tuần trước</MudButton>
-        </MudItem>
-        <MudItem>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ThisWeek">Tuần này</MudButton>
-        </MudItem>
-        <MudItem>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NextWeek">Tuần tới</MudButton>
-        </MudItem>
-    </MudGrid>
+
     <MudGrid Class="mt-2">
-        <MudItem>
-            <MudText Typo="Typo.h4"><b>Thời khóa biểu</b></MudText>
+        <MudItem xs="7" sm="6">
+            <MudGrid>
+                <MudItem>
+                    <MudText Typo="Typo.h4"><b>Thời khóa biểu</b></MudText>
+                </MudItem>
+                <MudItem>
+                    <MudIcon Icon="@Icons.Material.Filled.AutoStories" Size="Size.Large"></MudIcon>
+                </MudItem>
+            </MudGrid>
         </MudItem>
-        <MudItem>
-            <MudIcon Icon="@Icons.Material.Filled.AutoStories" Size="Size.Large"></MudIcon>
+        <MudItem xs="5" sm="6">
+            <MudGrid>
+                <MudItem>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LastWeek" Style="width:150px">Tuần trước</MudButton>
+                </MudItem>
+                <MudItem>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ThisWeek" Style="width:150px">Tuần này</MudButton>
+                </MudItem>
+                <MudItem>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NextWeek" Style="width:150px">Tuần tới</MudButton>
+                </MudItem>
+            </MudGrid>
         </MudItem>
-    </MudGrid>
+</MudGrid>
     @for (int i = 0; i < 6; i++)
     {
         int index = i;

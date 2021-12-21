@@ -5,7 +5,8 @@
 
 @if (Program.Student != null)
 {
-    <MudGrid Class="mt-10">
+<MudPaper>
+    <MudGrid Class="mt-5">
         <MudItem xs="6" sm="3">
             <MudCard>
                 @if (_data.Count == 0)
@@ -27,6 +28,7 @@
             <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
                 Đổi mật khẩu
             </MudButton>
+
         </MudItem>
         <MudItem xs="6" sm="9">
             <MudGrid>
@@ -45,8 +47,8 @@
             <MudGrid>
                 <MudItem xs="12" sm="6">
                     <MudSelect T="bool" Label="Giới tính" @bind-Value="@Program.Student.Sex">
-                        <MudSelectItem Value="@true" />
-                        <MudSelectItem Value="@false" />
+                        <MudSelectItem Value="@true">Nam</MudSelectItem>
+                        <MudSelectItem Value="@false">Nữ</MudSelectItem>
 
                     </MudSelect>
                     <MudTextField @bind-Value="@Program.Student.Email" Label="Email" Variant="Variant.Text"></MudTextField>
@@ -91,10 +93,13 @@
             </MudGrid>
         </MudItem>
     </MudGrid>
+    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small" OnClick="@OnValidSubmit" Class="mt-auto" ButtonType="ButtonType.Reset" Style="position:center">Lưu</MudButton>
+</MudPaper>
 }
 else
 {
-    <MudGrid Class="mt-10">
+<MudPaper>
+    <MudGrid Class="mt-5">
         <MudItem xs="6" sm="3">
             <MudCard>
                 <MudCardMedia Image="@_data.FirstOrDefault().Item2" Height="250" />
@@ -129,8 +134,8 @@ else
             <MudGrid>
                 <MudItem xs="12" sm="6">
                     <MudSelect T="bool" Label="Giới tính" @bind-Value="@Program.Teacher.Sex">
-                        <MudSelectItem Value="@true" />
-                        <MudSelectItem Value="@false" />
+                        <MudSelectItem Value="@true">Nam</MudSelectItem>
+                        <MudSelectItem Value="@false">Nữ</MudSelectItem>
 
                     </MudSelect>
                     <MudTextField @bind-Value="@Program.Teacher.Email" Label="Email" Variant="Variant.Text"></MudTextField>
@@ -166,9 +171,14 @@ else
 
         </MudItem>
     </MudGrid>
+    <br />
+    <br />
+    <br />
+    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small" OnClick="@OnValidSubmit" Class="mt-auto" ButtonType="ButtonType.Reset" Style="position:center">Lưu</MudButton>
+</MudPaper>
 }
 
-<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small" OnClick="@OnValidSubmit">Save</MudButton>
+
 
 @code {
 
@@ -191,6 +201,7 @@ else
     protected async override Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        await Task.Delay(1);
         if (Program.Student != null)
         {
 
