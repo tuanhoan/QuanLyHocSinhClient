@@ -11,8 +11,12 @@
     {
         <h3>@_newsFeed.Title</h3>
         @*<MudItem xs="6" sm="6">
+<<<<<<< HEAD
             <MudCardMedia Image="@_newsFeed.Image" Height="3
             00"></MudCardMedia>
+=======
+            <MudCardMedia Image="@_newsFeed.Image" Height="300"></MudCardMedia>
+>>>>>>> c7476e1f8d0dd0ceed21b1d115b9a6a10c2fd1d5
         </MudItem>*@
         
         <p>@_newsFeed.Content</p>
@@ -79,7 +83,10 @@
         this.comment.NewsFeedId = _newsFeed.Id;
         this.comment.StudentId = Program.Student.Id;
 
-        await API<Comment>.Instance.PostAsync("/api/Comment", comment);
+        comment = await API<Comment>.Instance.PostAsync("/api/Comment", comment);
+        comment.StudentNavigation = Program.Student;
+        comments.Insert(0, comment);
+
         comment = new Comment();
     }
     protected override async Task OnInitializedAsync()

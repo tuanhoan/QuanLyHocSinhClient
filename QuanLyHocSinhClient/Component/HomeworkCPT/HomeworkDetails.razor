@@ -77,7 +77,9 @@
         this.homeworkSubmit.HomeworkId = _homework.Id;
         this.homeworkSubmit.StudentId = Program.Student.Id;
 
-        await API<HomeworkSubmit>.Instance.PostAsync("/api/HomeworkSubmit", homeworkSubmit);
+        homeworkSubmit = await API<HomeworkSubmit>.Instance.PostAsync("/api/HomeworkSubmit", homeworkSubmit);
+        homeworkSubmit.StudentNavigation = Program.Student;
+        homeworkSubmits.Insert(0, homeworkSubmit);
         homeworkSubmit = new HomeworkSubmit();
     }
     protected override async Task OnInitializedAsync()
@@ -90,6 +92,6 @@
             _listImg = _homework.Image.Split("|").ToList();
             _listImg.RemoveAt(_listImg.Count-1);
         }
-        
+
     }
 }
